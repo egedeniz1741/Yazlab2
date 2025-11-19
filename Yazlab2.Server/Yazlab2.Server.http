@@ -1,0 +1,6 @@
+@Yazlab2.Server_HostAddress = http://localhost:5120
+
+GET {{Yazlab2.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

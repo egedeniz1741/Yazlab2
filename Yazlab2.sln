@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36623.8
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "yazlab2.client", "yazlab2.client\yazlab2.client.esproj", "{8F76F243-A436-0B5A-4ED7-68D6448D2261}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yazlab2.Server", "Yazlab2.Server\Yazlab2.Server.csproj", "{E5D0C057-B9D1-42EA-BD30-E33AE956953F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".git", ".git", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8F76F243-A436-0B5A-4ED7-68D6448D2261}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F76F243-A436-0B5A-4ED7-68D6448D2261}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F76F243-A436-0B5A-4ED7-68D6448D2261}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{8F76F243-A436-0B5A-4ED7-68D6448D2261}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F76F243-A436-0B5A-4ED7-68D6448D2261}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F76F243-A436-0B5A-4ED7-68D6448D2261}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{E5D0C057-B9D1-42EA-BD30-E33AE956953F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5D0C057-B9D1-42EA-BD30-E33AE956953F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5D0C057-B9D1-42EA-BD30-E33AE956953F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5D0C057-B9D1-42EA-BD30-E33AE956953F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {50D4E08D-26AF-4553-97E0-F729FBED25FE}
+	EndGlobalSection
+EndGlobal
