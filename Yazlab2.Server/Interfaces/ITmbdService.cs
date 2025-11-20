@@ -1,6 +1,6 @@
-﻿using Yazlab2.DTOs; // Birazdan oluşturacağız
+﻿using Yazlab2.DTOs;
 
-namespace Yazlab2.Interfaces
+namespace Yazlab2.Server.Interfaces
 {
     public interface ITmdbService
     {
@@ -9,5 +9,6 @@ namespace Yazlab2.Interfaces
 
         // İsimle film ara
         Task<List<MovieDto>> SearchMoviesAsync(string query);
+        Task<MovieDto> GetMovieDetailAsync(int id);
     }
 }

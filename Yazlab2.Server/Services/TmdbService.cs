@@ -1,13 +1,13 @@
 ﻿using Newtonsoft.Json;
 using Yazlab2.DTOs;
-using Yazlab2.Interfaces;
+using Yazlab2.Server.Interfaces;
 
 namespace Yazlab2.Services
 {
     public class TmdbService : ITmdbService
     {
         private readonly HttpClient _httpClient;
-        private readonly IConfiguration _configuration; // Ayarları okumak için
+        private readonly IConfiguration _configuration; 
         private readonly string _baseUrl = "https://api.themoviedb.org/3";
 
         public TmdbService(HttpClient httpClient, IConfiguration configuration)
@@ -18,7 +18,7 @@ namespace Yazlab2.Services
 
         public async Task<List<MovieDto>> GetPopularMoviesAsync()
         {
-            // Anahtarı appsettings.json'dan çekiyoruz
+           
             var apiKey = _configuration["TMDb:ApiKey"];
 
             var response = await _httpClient.GetAsync($"{_baseUrl}/movie/popular?api_key={apiKey}&language=tr-TR");
@@ -35,7 +35,7 @@ namespace Yazlab2.Services
                 Id = m.id,
                 Title = m.title,
                 Overview = m.overview,
-                // Poster yoksa boş resim dönmesin diye kontrol
+                
                 PosterPath = !string.IsNullOrEmpty(m.poster_path)
                     ? "https://image.tmdb.org/t/p/w500" + m.poster_path
                     : "https://via.placeholder.com/500x750?text=No+Image",
@@ -43,7 +43,29 @@ namespace Yazlab2.Services
                 VoteAverage = m.vote_average
             }).ToList();
         }
+        public async Task<MovieDto> GetMovieDetailAsync(int id)
+        {
+            var apiKey = _configuration["TMDb:ApiKey"];
+            var response = await _httpClient.GetAsync($"{_baseUrl}/movie/{id}?api_key={apiKey}&language=tr-TR");
 
+            if (!response.IsSuccessStatusCode) return null;
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+           
+            dynamic m = JsonConvert.DeserializeObject(jsonString);
+
+            return new MovieDto
+            {
+                Id = m.id,
+                Title = m.title,
+                Overview = m.overview,
+                PosterPath = m.poster_path != null
+                    ? "https://image.tmdb.org/t/p/w500" + m.poster_path
+                    : "https://via.placeholder.com/500x750?text=No+Image",
+                ReleaseDate = m.release_date,
+                VoteAverage = m.vote_average
+            };
+        }
         public async Task<List<MovieDto>> SearchMoviesAsync(string query)
         {
             var apiKey = _configuration["TMDb:ApiKey"];

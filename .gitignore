@@ -1,0 +1,17 @@
+# --- Visual Studio ve .NET Gereksiz Dosyalarý ---
+.vs/
+bin/
+obj/
+[Bb]in/
+[Oo]bj/
+
+# --- Hassas Dosyalar (Kesinlikle Gizlenmeli) ---
+**/appsettings.json
+**/appsettings.Development.json
+**/*.user
+
+# --- Frontend (Node_modules zaten client içindeki gitignore'da var ama garanti olsun) ---
+node_modules/
+dist/
+.env
+.DS_Store

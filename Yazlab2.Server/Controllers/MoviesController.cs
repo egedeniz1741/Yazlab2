@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Yazlab2.Interfaces;
+using Yazlab2.Server.Interfaces;
 
 namespace Yazlab2.Controllers
 {
@@ -22,6 +22,15 @@ namespace Yazlab2.Controllers
             return Ok(movies);
         }
 
+        [HttpGet("{id}")]  //api/movies/550
+        public async Task<IActionResult> GetMovieDetail(int id)
+        {
+            var movie = await _tmdbService.GetMovieDetailAsync(id);
+
+            if (movie == null) return NotFound("Film bulunamadı.");
+
+            return Ok(movie);
+        }
         [HttpGet("search")] // api/movies/search?query=batman
         public async Task<IActionResult> SearchMovies([FromQuery] string query)
         {

@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Yazlab2.Data;
 using Yazlab2.Interfaces;
+using Yazlab2.Server.Interfaces;
 using Yazlab2.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // 2. Servisler
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddHttpClient<ITmdbService, TmdbService>();
+builder.Services.AddHttpClient<IBookService, GoogleBookService>();
 
 // 3. CORS (Önemli: React'in baðlanmasýna izin ver)
 builder.Services.AddCors(options =>

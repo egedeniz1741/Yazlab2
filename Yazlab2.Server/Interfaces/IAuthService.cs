@@ -8,5 +8,7 @@ namespace Yazlab2.Interfaces
         Task<User> Register(RegisterDto request);
         Task<string> Login(LoginDto request);
         Task<bool> UserExists(string email);
+
+
     }
 }
