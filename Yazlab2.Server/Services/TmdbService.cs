@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+using Newtonsoft.Json;
 using Yazlab2.DTOs;
 using Yazlab2.Server.Interfaces;
 
@@ -16,12 +17,12 @@ namespace Yazlab2.Services
             _configuration = configuration;
         }
 
-        public async Task<List<MovieDto>> GetPopularMoviesAsync()
+        public async Task<List<MovieDto>> GetPopularMoviesAsync(int page)
         {
-           
-            var apiKey = _configuration["TMDb:ApiKey"];
 
-            var response = await _httpClient.GetAsync($"{_baseUrl}/movie/popular?api_key={apiKey}&language=tr-TR");
+            var apiKey = _configuration["TMDb:ApiKey"];
+            // page parametresini URL'e ekledik
+            var response = await _httpClient.GetAsync($"{_baseUrl}/movie/popular?api_key={apiKey}&language=tr-TR&page={page}");
 
             if (!response.IsSuccessStatusCode) return new List<MovieDto>();
 
@@ -71,6 +72,51 @@ namespace Yazlab2.Services
             var apiKey = _configuration["TMDb:ApiKey"];
 
             var response = await _httpClient.GetAsync($"{_baseUrl}/search/movie?api_key={apiKey}&query={query}&language=tr-TR");
+
+            if (!response.IsSuccessStatusCode) return new List<MovieDto>();
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+            var data = JsonConvert.DeserializeObject<TmdbResponse>(jsonString);
+
+            if (data?.Results == null) return new List<MovieDto>();
+
+            return data.Results.Select(m => new MovieDto
+            {
+                Id = m.id,
+                Title = m.title,
+                Overview = m.overview,
+                PosterPath = !string.IsNullOrEmpty(m.poster_path)
+                    ? "https://image.tmdb.org/t/p/w500" + m.poster_path
+                    : "https://via.placeholder.com/500x750?text=No+Image",
+                ReleaseDate = m.release_date,
+                VoteAverage = m.vote_average
+            }).ToList();
+        }
+        public async Task<List<GenreDto>> GetGenresAsync()
+        {
+            var apiKey = _configuration["TMDb:ApiKey"];
+            var response = await _httpClient.GetAsync($"{_baseUrl}/genre/movie/list?api_key={apiKey}&language=tr-TR");
+
+            if (!response.IsSuccessStatusCode) return new List<GenreDto>();
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+            var data = JsonConvert.DeserializeObject<GenreResponse>(jsonString);
+            return data?.Genres ?? new List<GenreDto>();
+        }
+
+      
+        public async Task<List<MovieDto>> DiscoverMoviesAsync(int? genreId, int? year, double? minRating,int page)
+        {
+            var apiKey = _configuration["TMDb:ApiKey"];
+
+            
+            var query = $"{_baseUrl}/discover/movie?api_key={apiKey}&language=tr-TR&sort_by=popularity.desc&page={page}";
+
+            if (genreId.HasValue) query += $"&with_genres={genreId}";
+            if (year.HasValue) query += $"&primary_release_year={year}";
+            if (minRating.HasValue) query += $"&vote_average.gte={minRating}";
+
+            var response = await _httpClient.GetAsync(query);
 
             if (!response.IsSuccessStatusCode) return new List<MovieDto>();
 

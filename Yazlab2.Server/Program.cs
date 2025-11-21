@@ -15,9 +15,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 // 2. Servisler
+builder.Services.AddMemoryCache();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddHttpClient<ITmdbService, TmdbService>();
 builder.Services.AddHttpClient<IBookService, GoogleBookService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // 3. CORS (Önemli: React'in baðlanmasýna izin ver)
 builder.Services.AddCors(options =>
@@ -69,6 +71,7 @@ app.UseCors("AllowAll"); // Önce Ýzin
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseStaticFiles(); 
 
 app.MapControllers();
 app.MapFallbackToFile("/index.html");

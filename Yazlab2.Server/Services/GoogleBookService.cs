@@ -14,10 +14,11 @@ namespace Yazlab2.Services
             _httpClient = httpClient;
         }
 
-        public async Task<List<BookDto>> SearchBooksAsync(string query)
+        public async Task<List<BookDto>> SearchBooksAsync(string query, int page)
         {
-            // Google Books API'de 'q' parametresi ile arama yapılır
-            var response = await _httpClient.GetAsync($"{_baseUrl}?q={query}&maxResults=20");
+            int startIndex = (page - 1) * 20;
+
+            var response = await _httpClient.GetAsync($"{_baseUrl}?q={query}&maxResults=20&startIndex={startIndex}");
 
             if (!response.IsSuccessStatusCode) return new List<BookDto>();
 

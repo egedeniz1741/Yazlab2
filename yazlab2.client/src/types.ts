@@ -17,3 +17,18 @@ export interface Book {
     pageCount: number;
     publishedDate: string;
 }
+
+export interface FeedItem {
+    type: "Movie" | "Book";
+    contentId: string | number;
+    user: string;
+    userAvatar: string;
+    title: string;
+    image: string;
+    action: string;
+    rating: number | null;
+    reviewText?: string; 
+    date: string;
+    likeCount: number;
+    isLiked: boolean;
+}

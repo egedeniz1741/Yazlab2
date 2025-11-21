@@ -15,12 +15,7 @@ namespace Yazlab2.Controllers
             _tmdbService = tmdbService;
         }
 
-        [HttpGet("popular")] // api/movies/popular
-        public async Task<IActionResult> GetPopularMovies()
-        {
-            var movies = await _tmdbService.GetPopularMoviesAsync();
-            return Ok(movies);
-        }
+      
 
         [HttpGet("{id}")]  //api/movies/550
         public async Task<IActionResult> GetMovieDetail(int id)
@@ -38,6 +33,40 @@ namespace Yazlab2.Controllers
                 return BadRequest("Arama metni boş olamaz.");
 
             var movies = await _tmdbService.SearchMoviesAsync(query);
+            return Ok(movies);
+        }
+        [HttpGet("genres")]
+        public async Task<IActionResult> GetGenres()
+        {
+            var genres = await _tmdbService.GetGenresAsync();
+            return Ok(genres);
+        }
+        [HttpGet("popular")]
+        public async Task<IActionResult> GetPopularMovies([FromQuery] int page = 1)
+        {
+            var movies = await _tmdbService.GetPopularMoviesAsync(page);
+            return Ok(movies);
+        }
+
+        [HttpGet("discover")]
+        public async Task<IActionResult> Discover(
+            [FromQuery] string? query, // YENİ: İsimle arama
+            [FromQuery] int? genreId,
+            [FromQuery] int? year,
+            [FromQuery] double? minRating,
+            [FromQuery] int page = 1)
+        {
+            
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                
+                
+                var searchResults = await _tmdbService.SearchMoviesAsync(query);
+                return Ok(searchResults);
+            }
+
+            
+            var movies = await _tmdbService.DiscoverMoviesAsync(genreId, year, minRating, page);
             return Ok(movies);
         }
     }

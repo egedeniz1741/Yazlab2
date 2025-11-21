@@ -5,14 +5,15 @@ namespace Yazlab2.DTOs
     public class RegisterDto
     {
         [Required]
-        public string Username { get; set; } // Kullanıcı Adı
+        public string Username { get; set; }
+        [Required, EmailAddress]
+        public string Email { get; set; }
+        [Required, MinLength(6)]
+        public string Password { get; set; }
 
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; } // E-posta
+        [Required, Compare("Password")] // Şifreler eşleşmeli kontrolü
+        public string ConfirmPassword { get; set; }
 
-        [Required]
-        [MinLength(6)]
-        public string Password { get; set; } // Şifre
+        public string? VerificationCode { get; set; }
     }
 }

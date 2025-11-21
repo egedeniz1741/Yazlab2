@@ -9,6 +9,14 @@ namespace Yazlab2.Interfaces
         Task<string> Login(LoginDto request);
         Task<bool> UserExists(string email);
 
+        Task<bool> VerifyEmail(string token, string email);
+
+        Task<bool> ResetPassword(ResetPasswordDto request);
+
+        Task<bool> ForgotPassword (string email);
+        Task<bool> SendVerificationCodeToEmail(string email);
+
+
 
     }
 }

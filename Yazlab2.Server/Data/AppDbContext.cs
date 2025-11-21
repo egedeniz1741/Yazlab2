@@ -9,6 +9,7 @@ namespace Yazlab2.Data
         {
         }
 
+        // --- TABLOLAR ---
         public DbSet<User> Users { get; set; }
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Book> Books { get; set; }
@@ -16,13 +17,19 @@ namespace Yazlab2.Data
         public DbSet<UserBook> UserBooks { get; set; }
         public DbSet<Review> Reviews { get; set; }
 
+        public DbSet<UserFollow> UserFollows { get; set; } 
+        public DbSet<Like> Likes { get; set; }            
+        public DbSet<FeedComment> FeedComments { get; set; }
+        public DbSet<CustomList> CustomLists { get; set; }
+        public DbSet<CustomListItem> CustomListItems { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             // --- UserMovie (Çoka-Çok İlişki) ---
             modelBuilder.Entity<UserMovie>()
-                .HasKey(um => new { um.UserId, um.MovieId }); 
+                .HasKey(um => new { um.UserId, um.MovieId });
 
             modelBuilder.Entity<UserMovie>()
                 .HasOne(um => um.User)
@@ -36,7 +43,7 @@ namespace Yazlab2.Data
 
             // --- UserBook (Çoka-Çok İlişki) ---
             modelBuilder.Entity<UserBook>()
-                .HasKey(ub => new { ub.UserId, ub.BookId }); 
+                .HasKey(ub => new { ub.UserId, ub.BookId });
 
             modelBuilder.Entity<UserBook>()
                 .HasOne(ub => ub.User)
@@ -47,6 +54,36 @@ namespace Yazlab2.Data
                 .HasOne(ub => ub.Book)
                 .WithMany(b => b.UserBooks)
                 .HasForeignKey(ub => ub.BookId);
+
+         
+            modelBuilder.Entity<UserFollow>()
+                .HasKey(uf => new { uf.FollowerId, uf.FollowingId });
+
+            modelBuilder.Entity<UserFollow>()
+                .HasOne(uf => uf.Follower)
+                .WithMany()
+                .HasForeignKey(uf => uf.FollowerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<UserFollow>()
+                .HasOne(uf => uf.Following)
+                .WithMany()
+                .HasForeignKey(uf => uf.FollowingId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+          
+            modelBuilder.Entity<FeedComment>()
+                .HasOne(fc => fc.User)
+                .WithMany()
+                .HasForeignKey(fc => fc.UserId)
+                .OnDelete(DeleteBehavior.Cascade); 
+
+            
+            modelBuilder.Entity<FeedComment>()
+                .HasOne<User>()
+                .WithMany()
+                .HasForeignKey(fc => fc.TargetUserId)
+                .OnDelete(DeleteBehavior.Restrict); 
         }
     }
 }

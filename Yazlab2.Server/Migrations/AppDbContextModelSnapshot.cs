@@ -54,6 +54,129 @@ namespace Yazlab2.Server.Migrations
                     b.ToTable("Books");
                 });
 
+            modelBuilder.Entity("Yazlab2.Entities.CustomList", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CustomLists");
+                });
+
+            modelBuilder.Entity("Yazlab2.Entities.CustomListItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("AddedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CustomListId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MovieId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("CustomListId");
+
+                    b.HasIndex("MovieId");
+
+                    b.ToTable("CustomListItems");
+                });
+
+            modelBuilder.Entity("Yazlab2.Entities.FeedComment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("MovieId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TargetUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TargetUserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("FeedComments");
+                });
+
+            modelBuilder.Entity("Yazlab2.Entities.Like", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("MovieId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("MovieId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Likes");
+                });
+
             modelBuilder.Entity("Yazlab2.Entities.Movie", b =>
                 {
                     b.Property<int>("Id")
@@ -142,6 +265,9 @@ namespace Yazlab2.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -150,6 +276,9 @@ namespace Yazlab2.Server.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
+
+                    b.Property<string>("VerificationToken")
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -181,6 +310,24 @@ namespace Yazlab2.Server.Migrations
                     b.ToTable("UserBooks");
                 });
 
+            modelBuilder.Entity("Yazlab2.Entities.UserFollow", b =>
+                {
+                    b.Property<int>("FollowerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FollowingId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("FollowerId", "FollowingId");
+
+                    b.HasIndex("FollowingId");
+
+                    b.ToTable("UserFollows");
+                });
+
             modelBuilder.Entity("Yazlab2.Entities.UserMovie", b =>
                 {
                     b.Property<int>("UserId")
@@ -204,6 +351,80 @@ namespace Yazlab2.Server.Migrations
                     b.HasIndex("MovieId");
 
                     b.ToTable("UserMovies");
+                });
+
+            modelBuilder.Entity("Yazlab2.Entities.CustomList", b =>
+                {
+                    b.HasOne("Yazlab2.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Yazlab2.Entities.CustomListItem", b =>
+                {
+                    b.HasOne("Yazlab2.Entities.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId");
+
+                    b.HasOne("Yazlab2.Entities.CustomList", "CustomList")
+                        .WithMany("Items")
+                        .HasForeignKey("CustomListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Yazlab2.Entities.Movie", "Movie")
+                        .WithMany()
+                        .HasForeignKey("MovieId");
+
+                    b.Navigation("Book");
+
+                    b.Navigation("CustomList");
+
+                    b.Navigation("Movie");
+                });
+
+            modelBuilder.Entity("Yazlab2.Entities.FeedComment", b =>
+                {
+                    b.HasOne("Yazlab2.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("TargetUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Yazlab2.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Yazlab2.Entities.Like", b =>
+                {
+                    b.HasOne("Yazlab2.Entities.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId");
+
+                    b.HasOne("Yazlab2.Entities.Movie", "Movie")
+                        .WithMany()
+                        .HasForeignKey("MovieId");
+
+                    b.HasOne("Yazlab2.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("Movie");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Yazlab2.Entities.Review", b =>
@@ -248,6 +469,25 @@ namespace Yazlab2.Server.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Yazlab2.Entities.UserFollow", b =>
+                {
+                    b.HasOne("Yazlab2.Entities.User", "Follower")
+                        .WithMany()
+                        .HasForeignKey("FollowerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Yazlab2.Entities.User", "Following")
+                        .WithMany()
+                        .HasForeignKey("FollowingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Follower");
+
+                    b.Navigation("Following");
+                });
+
             modelBuilder.Entity("Yazlab2.Entities.UserMovie", b =>
                 {
                     b.HasOne("Yazlab2.Entities.Movie", "Movie")
@@ -272,6 +512,11 @@ namespace Yazlab2.Server.Migrations
                     b.Navigation("Reviews");
 
                     b.Navigation("UserBooks");
+                });
+
+            modelBuilder.Entity("Yazlab2.Entities.CustomList", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("Yazlab2.Entities.Movie", b =>

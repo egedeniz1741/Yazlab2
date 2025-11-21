@@ -1,14 +1,14 @@
-import axios from "axios";
+ï»¿import axios from "axios";
 
-// 1. Axios'un özel bir kopyasını oluşturuyoruz
+// 1. Axios'un Ã¶zel bir kopyasÄ±nÄ± oluÅŸturuyoruz
 const api = axios.create();
 
-// 2. Her istekten önce (Request Interceptor) araya gir
+// 2. Her istekten Ã¶nce (Request Interceptor) araya gir
 api.interceptors.request.use((config) => {
-  // Tarayıcı hafızasından GÜNCEL token'ı oku
+  // TarayÄ±cÄ± hafÄ±zasÄ±ndan GÃœNCEL token'Ä± oku
   const token = localStorage.getItem("token");
   
-  // Eğer token varsa, isteğin başlığına (Header) ekle
+  // EÄŸer token varsa, isteÄŸin baÅŸlÄ±ÄŸÄ±na (Header) ekle
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
