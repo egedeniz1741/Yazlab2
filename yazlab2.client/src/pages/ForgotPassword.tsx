@@ -1,78 +1,103 @@
-import { useState } from "react";
+ï»¿import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Geri dönmek için
+import { useNavigate, Link } from "react-router-dom";
+import api from "../api";
+import "./Login.css";
+
+// Ä°konlar
+import { MdEmail } from "react-icons/md";
+import { RiLockPasswordLine } from "react-icons/ri";
 
 function ForgotPassword() {
     const [email, setEmail] = useState("");
-    const [message, setMessage] = useState("");     // Başarılı mesajı için
-    const [error, setError] = useState("");         // Hata mesajı için
+    const [message, setMessage] = useState("");
+    const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+
     const navigate = useNavigate();
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
         setMessage("");
         setError("");
+        setIsLoading(true);
+
+        await new Promise(resolve => setTimeout(resolve, 800));
 
         try {
-            // Backend'e isteği at
-            const response = await axios.post("/api/auth/forgot-password", { email });
-            
-            // Başarılıysa mesajı göster
-            setMessage(response.data); // "Şifre sıfırlama linki..."
-            
+            const response = await api.post("/api/auth/forgot-password", { email });
+            setMessage(response.data);
+
         } catch (err: any) {
-            // Backend'den gelen hatayı yakala (BadRequest)
             if (err.response && err.response.data) {
-                // Backend düz yazı gönderdiği için direkt data'yı alıyoruz
-                setError(typeof err.response.data === "string" ? err.response.data : "Bir hata oluştu.");
+                setError(typeof err.response.data === "string" ? err.response.data : "Bir hata oluÅŸtu.");
             } else {
-                setError("Sunucuya ulaşılamadı.");
+                setError("Sunucuya ulaÅŸÄ±lamadÄ±.");
             }
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
-        <div style={{ padding: "50px", textAlign: "center", maxWidth: "400px", margin: "0 auto" }}>
-            <h2>Şifremi Unuttum</h2>
-            <p style={{color: "#666", fontSize: "14px"}}>Sistemde kayıtlı e-posta adresinizi giriniz.</p>
-            
-            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "15px", marginTop: "20px" }}>
-                <input 
-                    type="email" 
-                    placeholder="E-posta adresiniz" 
-                    value={email} 
-                    onChange={e => setEmail(e.target.value)} 
-                    required 
-                    style={{ padding: "12px", borderRadius: "5px", border: "1px solid #ccc" }} 
-                />
-                
-                <button 
-                    type="submit" 
-                    style={{ padding: "12px", backgroundColor: "#007bff", color: "white", border: "none", borderRadius: "5px", cursor: "pointer", fontWeight: "bold" }}
-                >
-                    Sıfırlama Linki Gönder
-                </button>
-            </form>
+        <div className="login-container">
+            <div className="login-card">
 
-            {/* Mesaj Alanları */}
-            {message && (
-                <div style={{ marginTop: "20px", padding: "10px", backgroundColor: "#d4edda", color: "#155724", borderRadius: "5px" }}>
-                    {message}
+                <div style={{ marginBottom: "20px" }}>
+                    <RiLockPasswordLine size={50} color="white" style={{ opacity: 0.8 }} />
                 </div>
-            )}
+                <h1 className="login-title" style={{ fontSize: "28px", marginBottom: "10px" }}>Åifreni mi Unuttun?</h1>
 
-            {error && (
-                <div style={{ marginTop: "20px", padding: "10px", backgroundColor: "#f8d7da", color: "#721c24", borderRadius: "5px" }}>
-                    {error}
+                <p style={{ fontSize: "14px", marginBottom: "30px", opacity: 0.8, lineHeight: "1.5" }}>
+                    AÅŸaÄŸÄ±daki kutucuÄŸa girdiÄŸin eposta adresine sÄ±fÄ±rlama linki gÃ¶nderilir
+                </p>
+
+                <form onSubmit={handleSubmit}>
+
+                    <div className="input-wrapper">
+                        <MdEmail className="input-icon" />
+                        <input
+                            type="email"
+                            className="modern-input"
+                            placeholder="E-posta"
+                            value={email}
+                            onChange={e => setEmail(e.target.value)}
+                            required
+                        />
+                    </div>
+
+                    <button type="submit" className="login-btn" disabled={isLoading}>
+                        {isLoading ? <div className="spinner"></div> : "BaÄŸlantÄ± GÃ¶nder"}
+                    </button>
+                </form>
+
+               
+                {message && (
+                    <div style={{
+                        marginTop: "20px",
+                        padding: "15px",
+                        background: "rgba(40, 167, 69, 0.2)",
+                        border: "1px solid rgba(40, 167, 69, 0.4)",
+                        borderRadius: "10px",
+                        color: "#155724",  
+                        fontSize: "14px",
+                        fontWeight: "bold"
+                    }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "10px", justifyContent: "center" }}>
+                            <span>âœ…</span>
+                            <span>{message}</span>
+                        </div>
+                        <br />
+                        <small style={{ opacity: 0.9, color: "#155724" }}>LÃ¼tfen e-posta kutunuzu kontrol edin.</small>
+                    </div>
+                )}
+
+                {error && <div className="error-msg">âš ï¸ {error}</div>}
+
+                <div className="link-text" style={{ marginTop: "30px" }}>
+                    <Link to="/login">â† GiriÅŸ SayfasÄ±na DÃ¶n</Link>
                 </div>
-            )}
-
-            <button 
-                onClick={() => navigate("/login")}
-                style={{ marginTop: "20px", background: "none", border: "none", color: "#666", cursor: "pointer", textDecoration: "underline" }}
-            >
-                Giriş Sayfasına Dön
-            </button>
+            </div>
         </div>
     );
 }
