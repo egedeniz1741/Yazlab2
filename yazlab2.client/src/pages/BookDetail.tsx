@@ -5,6 +5,7 @@ import type { Book } from "../types";
 import ReviewSection from "../components/ReviewSection";
 import ListSelector from "../components/ListSelector";
 import StarRating from "../components/StarRating";
+import "./BookDetail.css";
 
 function BookDetail() {
     const { id } = useParams();
@@ -22,7 +23,6 @@ function BookDetail() {
                 const bookRes = await api.get(`/api/books/${id}`);
                 setBook(bookRes.data);
 
-                // Durum ve Puan Çekme
                 const statusRes = await api.get(`/api/library/book-status/${bookRes.data.id}`);
                 if (statusRes.data && statusRes.data.rating) {
                     setUserRating(statusRes.data.rating);
@@ -56,38 +56,56 @@ function BookDetail() {
         addToLibrary("Read", rate);
     };
 
-    if (loading) return <div style={{ textAlign: "center", marginTop: "50px" }}>Yükleniyor...</div>;
-    if (!book) return <div style={{ textAlign: "center" }}>Kitap bulunamadı!</div>;
+    if (loading) return <div className="loading">Yükleniyor...</div>;
+    if (!book) return <div className="not-found">Kitap bulunamadı!</div>;
 
     return (
-        <div style={{ padding: "20px", maxWidth: "900px", margin: "0 auto" }}>
-            <button onClick={() => navigate(-1)} style={{ marginBottom: "20px", cursor: "pointer" }}>← Geri Dön</button>
+        <div className="book-detail-container">
+            <button onClick={() => navigate(-1)} className="back-button">
+                <span className="back-arrow">←</span> Geri Dön
+            </button>
 
-            <div style={{ display: "flex", gap: "40px", flexWrap: "wrap" }}>
-                <div style={{ flexShrink: 0 }}>
-                    <img src={book.coverUrl} alt={book.title} style={{ width: "250px", borderRadius: "5px", boxShadow: "0 5px 15px rgba(0,0,0,0.2)" }} />
+            <div className="content-wrapper">
+                <div className="image-container">
+                    <div className="image-wrapper">
+                        <img src={book.coverUrl} alt={book.title} className="book-image" />
+                    </div>
                 </div>
 
-                <div style={{ flex: 1 }}>
-                    <h1 style={{ margin: "0 0 10px 0" }}>{book.title}</h1>
-                    <p style={{ fontSize: "18px", color: "#555", fontStyle: "italic" }}>Yazar: {book.authors?.join(", ") || "Bilinmiyor"}</p>
-                    <div style={{ margin: "20px 0", fontSize: "14px", color: "#666" }}>
-                        <span>📄 {book.pageCount} Sayfa</span>
-                        <span style={{ marginLeft: "20px" }}>📅 {book.publishedDate}</span>
+                <div className="info-container">
+                    <h1 className="title">{book.title}</h1>
+                    <p className="author">
+                        <span className="author-label">Yazar:</span> {book.authors?.join(", ") || "Bilinmiyor"}
+                    </p>
+
+                    <div className="meta-info">
+                        <span className="meta-badge">📄 {book.pageCount} Sayfa</span>
+                        <span className="meta-badge">📅 {book.publishedDate}</span>
                     </div>
 
-                    {/* PUANLAMA */}
-                    <div style={{ marginBottom: "20px" }}>
+                    <div className="rating-container">
+                        <h4 className="rating-title">Puanınız</h4>
                         <StarRating rating={userRating} onRate={handleRate} />
                     </div>
 
-                    <h3>Özet</h3>
-                    <div style={{ lineHeight: "1.6", maxHeight: "300px", overflowY: "auto", paddingRight: "10px" }} dangerouslySetInnerHTML={{ __html: book.description || "Açıklama bulunmuyor." }} />
+                    <div className="description-container">
+                        <h3 className="section-title">Kitap Hakkında</h3>
+                        <div
+                            className="description"
+                            dangerouslySetInnerHTML={{ __html: book.description || "Açıklama bulunmuyor." }}
+                        />
+                    </div>
 
-                    <div style={{ marginTop: "30px", display: "flex", gap: "10px", flexWrap: "wrap" }}>
-                        <button onClick={() => addToLibrary("Read")} style={btnStyle("#28a745")}>✅ Okudum</button>
-                        <button onClick={() => addToLibrary("PlanToRead")} style={btnStyle("#17a2b8")}>📖 Listeme Ekle</button>
-                        <button onClick={() => setIsListModalOpen(true)} style={btnStyle("#9c27b0")}>📂 Özel Listeye Ekle</button>
+                    <div className="button-container">
+                        <button onClick={() => addToLibrary("Read")} className="read-button">
+                            ✅ Okudum
+                        </button>
+                        <button onClick={() => addToLibrary("PlanToRead")} className="plan-button">
+                            📖 Listeme Ekle
+                        </button>
+                        <button onClick={() => setIsListModalOpen(true)} className="list-button">
+                            📂 Özel Listeye Ekle
+                        </button>
                     </div>
                 </div>
             </div>
@@ -99,16 +117,5 @@ function BookDetail() {
         </div>
     );
 }
-
-const btnStyle = (bgColor: string) => ({
-    padding: "12px 24px",
-    backgroundColor: bgColor,
-    color: "white",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-    fontSize: "16px",
-    fontWeight: "bold"
-});
 
 export default BookDetail;

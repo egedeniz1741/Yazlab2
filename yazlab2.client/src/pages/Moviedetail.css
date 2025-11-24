@@ -1,0 +1,231 @@
+.movie-detail-container {
+    padding: 30px 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.loading {
+    text-align: center;
+    margin-top: 100px;
+    font-size: 20px;
+    color: #666;
+    font-weight: 500;
+}
+
+.not-found {
+    text-align: center;
+    margin-top: 100px;
+    font-size: 24px;
+    color: #999;
+    font-weight: 600;
+}
+
+.back-button {
+    margin-bottom: 30px;
+    padding: 10px 20px;
+    background-color: #f8f9fa;
+    color: #495057;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+    .back-button:hover {
+        background-color: #e9ecef;
+        border-color: #ced4da;
+    }
+
+.back-arrow {
+    font-size: 18px;
+    margin-right: 8px;
+}
+
+.content-wrapper {
+    display: flex;
+    gap: 50px;
+    flex-wrap: wrap;
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 40px;
+}
+
+.poster-container {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.poster-wrapper {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.poster {
+    width: 320px;
+    height: auto;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+    .poster:hover {
+        transform: scale(1.02);
+    }
+
+.info-container {
+    flex: 1;
+    min-width: 300px;
+}
+
+.title {
+    margin: 0 0 12px 0;
+    font-size: 32px;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1.3;
+}
+
+.release-date {
+    font-size: 16px;
+    color: #495057;
+    font-style: normal;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.release-label {
+    opacity: 0.7;
+}
+
+.vote-container {
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.vote-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background-color: #fff3e0;
+    border-radius: 12px;
+    border: 2px solid #ffb74d;
+}
+
+.vote-star {
+    font-size: 28px;
+    color: #ff9800;
+    line-height: 1;
+}
+
+.vote-score {
+    font-size: 26px;
+    font-weight: 700;
+    color: #e65100;
+    line-height: 1;
+}
+
+.vote-max {
+    font-size: 16px;
+    color: #f57c00;
+    font-weight: 600;
+}
+
+.vote-label {
+    font-size: 14px;
+    color: #666;
+    font-weight: 600;
+}
+
+.rating-container {
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+}
+
+.rating-title {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #495057;
+}
+
+.overview-container {
+    margin-bottom: 30px;
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 15px;
+    margin-top: 0;
+}
+
+.overview {
+    line-height: 1.7;
+    color: #495057;
+    font-size: 15px;
+    margin: 0;
+}
+
+.button-container {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+    .button-container button {
+        padding: 14px 28px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+.watched-button {
+    background-color: #4CAF50;
+    color: white;
+}
+
+    .watched-button:hover {
+        background-color: #45a049;
+        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    }
+
+.plan-button {
+    background-color: #2196F3;
+    color: white;
+}
+
+    .plan-button:hover {
+        background-color: #1976D2;
+        box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+    }
+
+.list-button {
+    background-color: #9c27b0;
+    color: white;
+}
+
+    .list-button:hover {
+        background-color: #7b1fa2;
+        box-shadow: 0 4px 12px rgba(156, 39, 176, 0.3);
+    }
