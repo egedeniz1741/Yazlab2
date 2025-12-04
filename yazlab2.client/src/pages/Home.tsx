@@ -10,19 +10,19 @@ interface Genre { id: number; name: string; }
 function Home() {
     const navigate = useNavigate();
 
-   
+ 
     const [activeTab, setActiveTab] = useState("feed");
     const [loading, setLoading] = useState(false);
 
     const [movies, setMovies] = useState<Movie[]>([]);
-    const [books, setBooks] = useState<Book[]>([]);
+    const [books, setBooks] = useState<Book[]>([]); 
     const [feed, setFeed] = useState<FeedItem[]>([]);
 
     const [popularMovies, setPopularMovies] = useState([]);
     const [topRatedMovies, setTopRatedMovies] = useState([]);
     const [popularBooks, setPopularBooks] = useState([]);
 
-  
+   
     const [feedPage, setFeedPage] = useState(1);
     const [hasMoreFeed, setHasMoreFeed] = useState(true);
     const [moviePage, setMoviePage] = useState(1);
@@ -30,13 +30,14 @@ function Home() {
     const [bookPage, setBookPage] = useState(1);
     const [hasMoreBooks, setHasMoreBooks] = useState(true);
 
-   
+    
+    const [mQuery, setMQuery] = useState("");
     const [genres, setGenres] = useState<Genre[]>([]);
     const [selectedGenre, setSelectedGenre] = useState<number | "">("");
     const [selectedYear, setSelectedYear] = useState<number | "">("");
     const [minRating, setMinRating] = useState<number>(0);
 
-  
+   
     const [bQuery, setBQuery] = useState("");
     const [bGenre, setBGenre] = useState("");
     const [bYear, setBYear] = useState<number | "">("");
@@ -50,7 +51,6 @@ function Home() {
             api.get("/api/movies/genres").then(res => setGenres(res.data)).catch(console.error);
         }
 
-     
         if (popularMovies.length === 0) loadShowcaseData();
 
         if (activeTab === "feed") {
@@ -81,12 +81,13 @@ function Home() {
         setLoading(true);
         try {
             const params = new URLSearchParams();
+            if (mQuery) params.append("query", mQuery); 
             if (selectedGenre) params.append("genreId", selectedGenre.toString());
             if (selectedYear) params.append("year", selectedYear.toString());
             if (minRating > 0) params.append("minRating", minRating.toString());
             params.append("page", pageNum.toString());
 
-            const endpoint = (selectedGenre || selectedYear || minRating > 0)
+            const endpoint = (mQuery || selectedGenre || selectedYear || minRating > 0)
                 ? `/api/movies/discover?${params.toString()}`
                 : `/api/movies/popular?page=${pageNum}`;
 
@@ -112,7 +113,7 @@ function Home() {
     };
 
     const applyFilters = () => { setMoviePage(1); setHasMoreMovies(true); loadMovies(1); };
-    const clearFilters = () => { setSelectedGenre(""); setSelectedYear(""); setMinRating(0); setMoviePage(1); setHasMoreMovies(true); setTimeout(() => loadMovies(1), 50); };
+    const clearFilters = () => { setMQuery(""); setSelectedGenre(""); setSelectedYear(""); setMinRating(0); setMoviePage(1); setHasMoreMovies(true); setTimeout(() => loadMovies(1), 50); };
 
     const applyBookFilters = () => { setBookPage(1); setHasMoreBooks(true); loadBooks(1); };
     const clearBookFilters = () => { setBQuery(""); setBGenre(""); setBYear(""); setBookPage(1); setHasMoreBooks(true); setTimeout(() => loadBooks(1), 50); };
@@ -122,29 +123,28 @@ function Home() {
     return (
         <div style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto", color: "#e4e4e7" }}>
 
-           
+            
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "30px", flexWrap: "wrap", gap: "15px" }}>
                 <h1 style={{ margin: 0, fontSize: "28px", fontWeight: "800", background: "linear-gradient(to right, #a855f7, #3b82f6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
                     MyFilm&BookArchive
                 </h1>
                 <div style={{ display: "flex", gap: "10px" }}>
                     <button onClick={() => navigate("/social")} style={navBtnStyle}>👥 Arkadaş Bul</button>
-                    
-                    <button onClick={() => setActiveTab("books")} style={navBtnStyle}>📚 Kitap Ara</button>
                     <button onClick={() => navigate("/profile")} style={navBtnStyle}>👤 Profilim</button>
                     <button onClick={handleLogout} style={{ ...navBtnStyle, backgroundColor: "rgba(239, 68, 68, 0.2)", color: "#f87171", border: "1px solid #ef4444" }}>Çıkış</button>
                 </div>
             </div>
 
-          
+         
             <div style={{ display: "flex", justifyContent: "center", marginBottom: "30px", borderBottom: "1px solid #3f3f46" }}>
                 <button onClick={() => setActiveTab("feed")} style={tabStyle(activeTab === "feed")}>📱 Sosyal Akış</button>
                 <button onClick={() => setActiveTab("movies")} style={tabStyle(activeTab === "movies")}>🎬 Filmleri Keşfet</button>
                 <button onClick={() => setActiveTab("books")} style={tabStyle(activeTab === "books")}>📚 Kitapları Keşfet</button>
             </div>
 
-          
+            
 
+           
             {activeTab === "feed" && (
                 <div>
                     {feed.length === 0 && !loading ? (
@@ -166,7 +166,7 @@ function Home() {
                 </div>
             )}
 
-           
+          
             {activeTab === "movies" && (
                 <div>
                     <Showcase title="🔥 En Popüler Filmler" items={popularMovies} type="movie" />
@@ -174,9 +174,16 @@ function Home() {
                     <hr style={{ border: "0", borderTop: "1px solid #3f3f46", margin: "40px 0" }} />
 
                     <div style={filterPanelStyle}>
+                        
                         <div>
-                            <label style={labelStyle}>Film Adı (Opsiyonel)</label>
-                            <input type="text" placeholder="Ara..." disabled style={{ ...inputStyle, opacity: 0.5 }} title="Film arama şu an discover API ile çakışıyor, filtreleri kullanın" />
+                            <label style={labelStyle}>Film Adı</label>
+                            <input
+                                type="text"
+                                placeholder="Matrix, Avatar..."
+                                value={mQuery}
+                                onChange={e => setMQuery(e.target.value)}
+                                style={{ ...inputStyle, width: "200px" }}
+                            />
                         </div>
                         <div>
                             <label style={labelStyle}>Tür</label>
@@ -193,7 +200,7 @@ function Home() {
                             <label style={labelStyle}>Min Puan: {minRating}</label>
                             <input type="range" min="0" max="10" step="1" value={minRating} onChange={e => setMinRating(Number(e.target.value))} style={{ width: "150px", cursor: "pointer", accentColor: "#3b82f6" }} />
                         </div>
-                        <button onClick={applyFilters} style={{ ...filterBtnStyle, backgroundColor: "#3b82f6" }}>Filtrele</button>
+                        <button onClick={applyFilters} style={{ ...filterBtnStyle, backgroundColor: "#3b82f6" }}>Filtrele / Ara</button>
                         <button onClick={clearFilters} style={{ ...filterBtnStyle, backgroundColor: "#52525b" }}>Temizle</button>
                     </div>
 
@@ -221,7 +228,7 @@ function Home() {
                 </div>
             )}
 
-            
+           
             {activeTab === "books" && (
                 <div>
                     <Showcase title="📚 En Çok Okunan Kitaplar" items={popularBooks} type="book" />
@@ -233,7 +240,7 @@ function Home() {
                             <input type="text" placeholder="Harry Potter..." value={bQuery} onChange={e => setBQuery(e.target.value)} style={{ ...inputStyle, width: "200px" }} />
                         </div>
                         <div>
-                            <label style={labelStyle}>Tür</label>
+                            <label style={labelStyle}>Tür (Konu)</label>
                             <select value={bGenre} onChange={e => setBGenre(e.target.value)} style={inputStyle}>
                                 <option value="">Tümü</option>
                                 {bookGenres.map(g => <option key={g} value={g}>{g}</option>)}
