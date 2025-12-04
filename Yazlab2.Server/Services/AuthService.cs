@@ -152,13 +152,13 @@ namespace Yazlab2.Services
 
         public async Task<bool> SendVerificationCodeToEmail(string email)
         {
-            // E-posta zaten kayıtlı mı?
+            
             if (await _context.Users.AnyAsync(u => u.Email == email)) return false;
 
-            // 5 Haneli Kod Üret
+            
             var code = new Random().Next(10000, 99999).ToString();
 
-            // Kodu 5 dakikalığına hafızaya (Cache) kaydet. Anahtar: Email, Değer: Kod
+          
             _cache.Set(email, code, TimeSpan.FromMinutes(5));
 
             var body = $"<h3>Doğrulama Kodunuz</h3><h1>{code}";

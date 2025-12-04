@@ -5,7 +5,6 @@ import type { Movie } from "../types";
 import ReviewSection from "../components/ReviewSection";
 import ListSelector from "../components/ListSelector";
 import StarRating from "../components/StarRating";
-import "./MovieDetail.css";
 
 function MovieDetail() {
     const { id } = useParams();
@@ -17,101 +16,50 @@ function MovieDetail() {
     const [userRating, setUserRating] = useState(0);
 
     useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
+        const fetchDetail = async () => {
             try {
                 const movieRes = await api.get(`/api/movies/${id}`);
                 setMovie(movieRes.data);
-
                 const statusRes = await api.get(`/api/library/movie-status/${movieRes.data.id}`);
-                if (statusRes.data && statusRes.data.rating) {
-                    setUserRating(statusRes.data.rating);
-                }
-            } catch (error) {
-                console.error("Hata:", error);
-            } finally {
-                setLoading(false);
-            }
+                if (statusRes.data?.rating) setUserRating(statusRes.data.rating);
+            } catch (error) { console.error("Hata", error); } finally { setLoading(false); }
         };
-        fetchData();
+        fetchDetail();
     }, [id]);
 
     const addToLibrary = async (status: string, ratingValue?: number) => {
         if (!movie) return;
         try {
-            await api.post("/api/library/add-movie", {
-                tmdbId: movie.id,
-                status: status,
-                rating: ratingValue || userRating
-            });
-
-            if (ratingValue) {
-                console.log("Puan kaydedildi.");
-            } else {
-                alert(status === "Watched" ? "Film 'İzledim' listesine eklendi!" : "Film izleme listene eklendi!");
-            }
-        } catch (error) {
-            console.error(error);
-            alert("Bir hata oluştu.");
-        }
+            await api.post("/api/library/add-movie", { tmdbId: movie.id, status, rating: ratingValue || userRating });
+            if (!ratingValue) alert("Liste güncellendi!");
+        } catch (error) { alert("Hata oluştu."); }
     };
 
-    const handleRate = (rate: number) => {
-        setUserRating(rate);
-        addToLibrary("Watched", rate);
-    };
+    const handleRate = (rate: number) => { setUserRating(rate); addToLibrary("Watched", rate); };
 
-    if (loading) return <div className="loading">Yükleniyor...</div>;
-    if (!movie) return <div className="not-found">Film bulunamadı!</div>;
+    if (loading) return <div style={{ textAlign: "center", marginTop: "50px", color: "#a1a1aa" }}>Yükleniyor...</div>;
+    if (!movie) return <div style={{ textAlign: "center", marginTop: "50px", color: "#a1a1aa" }}>Film bulunamadı!</div>;
 
     return (
-        <div className="movie-detail-container">
-            <button onClick={() => navigate(-1)} className="back-button">
-                <span className="back-arrow">←</span> Geri Dön
-            </button>
+        <div style={{ padding: "20px", maxWidth: "900px", margin: "0 auto", color: "#e4e4e7" }}>
+            <button onClick={() => navigate(-1)} style={{ marginBottom: "20px", cursor: "pointer", background: "none", border: "none", color: "#3b82f6" }}>← Geri Dön</button>
 
-            <div className="content-wrapper">
-                <div className="poster-container">
-                    <div className="poster-wrapper">
-                        <img src={movie.posterPath} alt={movie.title} className="poster" />
-                    </div>
-                </div>
+            <div style={{ display: "flex", gap: "30px", flexWrap: "wrap", backgroundColor: "#27272a", padding: "20px", borderRadius: "15px", border: "1px solid #3f3f46" }}>
+                <img src={movie.posterPath} alt={movie.title} style={{ width: "300px", borderRadius: "10px" }} />
+                <div style={{ flex: 1 }}>
+                    <h1 style={{ margin: "0 0 10px 0" }}>{movie.title}</h1>
+                    <p style={{ color: "#a1a1aa", fontStyle: "italic" }}>{movie.releaseDate}</p>
+                    <div style={{ margin: "20px 0", color: "#fbbf24", fontWeight: "bold", fontSize: "18px" }}>★ {movie.voteAverage.toFixed(1)} / 10</div>
 
-                <div className="info-container">
-                    <h1 className="title">{movie.title}</h1>
-                    <p className="release-date">
-                        <span className="release-label">Yayın Tarihi:</span> {movie.releaseDate}
-                    </p>
+                    <div style={{ marginBottom: "20px" }}><StarRating rating={userRating} onRate={handleRate} /></div>
 
-                    <div className="vote-container">
-                        <div className="vote-box">
-                            <span className="vote-star">★</span>
-                            <span className="vote-score">{movie.voteAverage.toFixed(1)}</span>
-                            <span className="vote-max">/ 10</span>
-                        </div>
-                        <span className="vote-label">TMDb Puanı</span>
-                    </div>
+                    <h3 style={{ fontSize: "18px", borderBottom: "1px solid #3f3f46", paddingBottom: "5px" }}>Özet</h3>
+                    <p style={{ lineHeight: "1.6", color: "#d4d4d8" }}>{movie.overview || "Özet yok."}</p>
 
-                    <div className="rating-container">
-                        <h4 className="rating-title">Sizin Puanınız</h4>
-                        <StarRating rating={userRating} onRate={handleRate} />
-                    </div>
-
-                    <div className="overview-container">
-                        <h3 className="section-title">Film Hakkında</h3>
-                        <p className="overview">{movie.overview || "Özet bulunmuyor."}</p>
-                    </div>
-
-                    <div className="button-container">
-                        <button onClick={() => addToLibrary("Watched")} className="watched-button">
-                            ✅ İzledim
-                        </button>
-                        <button onClick={() => addToLibrary("PlanToWatch")} className="plan-button">
-                            📅 Listeme Ekle
-                        </button>
-                        <button onClick={() => setIsListModalOpen(true)} className="list-button">
-                            📂 Özel Listeye Ekle
-                        </button>
+                    <div style={{ marginTop: "30px", display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                        <button onClick={() => addToLibrary("Watched")} style={btnStyle("#22c55e")}>✅ İzledim</button>
+                        <button onClick={() => addToLibrary("PlanToWatch")} style={btnStyle("#3b82f6")}>📅 Listeme Ekle</button>
+                        <button onClick={() => setIsListModalOpen(true)} style={btnStyle("#a855f7")}>📂 Özel Listeye Ekle</button>
                     </div>
                 </div>
             </div>
@@ -121,5 +69,9 @@ function MovieDetail() {
         </div>
     );
 }
+
+const btnStyle = (bgColor: string) => ({
+    padding: "10px 20px", backgroundColor: bgColor, color: "white", border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: "bold"
+});
 
 export default MovieDetail;

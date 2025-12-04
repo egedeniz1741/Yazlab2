@@ -38,7 +38,7 @@ function CustomListDetail() {
         <div style={{ padding: "20px", maxWidth: "1000px", margin: "0 auto" }}>
             <button onClick={() => navigate(-1)} style={{ marginBottom: "20px", cursor: "pointer" }}>← Geri Dön</button>
 
-            {/* Başlık Alanı */}
+          
             <div style={{ borderBottom: "1px solid #eee", paddingBottom: "20px", marginBottom: "20px" }}>
                 <h1 style={{ margin: "0 0 10px 0" }}>📂 {list.name}</h1>
                 <p style={{ color: "#666", margin: 0 }}>
@@ -47,7 +47,7 @@ function CustomListDetail() {
                 </p>
             </div>
 
-            {/* Liste İçeriği */}
+           
             {list.items.length === 0 ? (
                 <p style={{ color: "#999", fontStyle: "italic" }}>Bu listede henüz içerik yok.</p>
             ) : (

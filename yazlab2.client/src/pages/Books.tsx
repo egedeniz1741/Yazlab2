@@ -9,11 +9,11 @@ function Books() {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    // Sayfalama State'leri
+    
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
 
-    // Arama Butonuna Basınca (Her şeyi sıfırla)
+   
     const handleSearch = async (e: any) => {
         e.preventDefault();
         if (!query.trim()) return;
@@ -21,21 +21,21 @@ function Books() {
         setBooks([]);
         setPage(1);
         setHasMore(true);
-        fetchBooks(1); // 1. Sayfayı çek
+        fetchBooks(1); 
     };
 
-    // API'den Kitap Çek
+
     const fetchBooks = async (pageNum: number) => {
         setLoading(true);
         try {
-            // pageNum parametresini ekledik
+            
             const response = await api.get(`/api/books/search?query=${query}&page=${pageNum}`);
 
             if (response.data.length === 0) {
                 setHasMore(false);
             } else {
                 if (pageNum === 1) setBooks(response.data);
-                else setBooks(prev => [...prev, ...response.data]); // Ekleme yap
+                else setBooks(prev => [...prev, ...response.data]); 
             }
         } catch (error) {
             console.error("Kitap arama hatası:", error);
@@ -47,7 +47,7 @@ function Books() {
 
     return (
         <div style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
-            {/* Başlık ve Arama */}
+           
             <div style={{ marginBottom: "30px", textAlign: "center" }}>
                 <h1 style={{ color: "#333" }}>Kitap Keşfet</h1>
 
@@ -71,7 +71,7 @@ function Books() {
 
             {loading && page === 1 && <div style={{ textAlign: "center" }}>Aranıyor...</div>}
 
-            {/* Kitap Listesi */}
+       
             <div style={{
                 display: "grid",
                 gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
@@ -111,7 +111,7 @@ function Books() {
                 <p style={{ textAlign: "center", color: "#888", marginTop: "20px" }}>Aramanızla eşleşen kitap bulunamadı.</p>
             )}
 
-            {/* DAHA FAZLA BUTONU */}
+            
             {hasMore && books.length > 0 && (
                 <div style={{ textAlign: "center", margin: "40px 0" }}>
                     <button

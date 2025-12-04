@@ -20,23 +20,30 @@ namespace Yazlab2.Controllers
             _context = context;
         }
 
-     
-        [HttpGet("search")] 
-        public async Task<IActionResult> SearchUsers([FromQuery] string query)
-        {
-            if (string.IsNullOrEmpty(query)) return BadRequest();
 
       
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchUsers([FromQuery] string? query) 
+        {
             var myId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-            var users = await _context.Users
-                .Where(u => u.Username.Contains(query) && u.Id != myId)
+    
+            var usersQuery = _context.Users.Where(u => u.Id != myId);
+
+            
+            if (!string.IsNullOrEmpty(query))
+            {
+                usersQuery = usersQuery.Where(u => u.Username.Contains(query));
+            }
+
+            
+            var users = await usersQuery
+                .Take(50)
                 .Select(u => new
                 {
                     u.Id,
                     u.Username,
                     u.AvatarUrl,
-                 
                     IsFollowing = _context.UserFollows.Any(f => f.FollowerId == myId && f.FollowingId == u.Id)
                 })
                 .ToListAsync();

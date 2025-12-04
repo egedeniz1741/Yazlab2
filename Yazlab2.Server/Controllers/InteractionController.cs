@@ -20,7 +20,7 @@ namespace Yazlab2.Controllers
             _context = context;
         }
 
-        // 1. Beğeni Durumunu Değiştir (Toggle Like)
+        
         [HttpPost("toggle-like")]
         public async Task<IActionResult> ToggleLike([FromBody] LikeDto request)
         {
@@ -32,7 +32,7 @@ namespace Yazlab2.Controllers
 
             if (request.TmdbId.HasValue)
             {
-                // Filmi bul (Yerel DB'de yoksa önce kaydedilmeli ama genelde feed'de vardır)
+                
                 movie = await _context.Movies.FirstOrDefaultAsync(m => m.TmdbId == request.TmdbId.ToString());
                 if (movie != null)
                     existingLike = await _context.Likes.FirstOrDefaultAsync(l => l.UserId == userId && l.MovieId == movie.Id);
@@ -46,14 +46,14 @@ namespace Yazlab2.Controllers
 
             if (existingLike != null)
             {
-                // Zaten beğenmiş -> Kaldır (Unlike)
+                
                 _context.Likes.Remove(existingLike);
                 await _context.SaveChangesAsync();
                 return Ok(new { liked = false });
             }
             else
             {
-                // Beğenmemiş -> Ekle (Like)
+               
                 if (movie == null && book == null) return BadRequest("İçerik bulunamadı.");
 
                 var newLike = new Like

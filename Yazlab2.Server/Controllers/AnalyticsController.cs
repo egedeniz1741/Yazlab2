@@ -15,11 +15,11 @@ namespace Yazlab2.Controllers
             _context = context;
         }
 
-        // 1. Platformun En Popüler Filmleri (En çok listeye eklenenler)
+        
         [HttpGet("popular-movies")]
         public async Task<IActionResult> GetPopularMovies()
         {
-            // DÜZELTME: Önce istatistiği çekiyoruz, sonra Join ile film detayını alıyoruz.
+            
             var movies = await _context.UserMovies
                 .GroupBy(um => um.MovieId)
                 .Select(g => new
@@ -47,18 +47,18 @@ namespace Yazlab2.Controllers
             return Ok(movies);
         }
 
-        // 2. Platformun En Yüksek Puanlı Filmleri (Kullanıcı puanlarına göre)
+        
         [HttpGet("top-rated-movies")]
         public async Task<IActionResult> GetTopRatedMovies()
         {
-            // DÜZELTME: Hata veren kısım burasıydı. Join yapısı ile çözüldü.
+            
             var movies = await _context.UserMovies
                 .Where(um => um.Rating.HasValue && um.Rating > 0)
                 .GroupBy(um => um.MovieId)
                 .Select(g => new
                 {
                     MovieId = g.Key,
-                    Average = g.Average(um => (double)um.Rating) // Double cast önemli
+                    Average = g.Average(um => (double)um.Rating) 
                 })
                 .OrderByDescending(x => x.Average)
                 .Take(10)
@@ -79,7 +79,7 @@ namespace Yazlab2.Controllers
             return Ok(movies);
         }
 
-        // 3. Platformun En Popüler Kitapları
+        
         [HttpGet("popular-books")]
         public async Task<IActionResult> GetPopularBooks()
         {

@@ -1,12 +1,12 @@
 ﻿import { useState } from "react";
 
 interface Props {
-    rating: number; // Mevcut puan (0-10)
-    onRate: (rating: number) => void; // Tıklanınca çalışacak fonksiyon
+    rating: number; 
+    onRate: (rating: number) => void; 
 }
 
 function StarRating({ rating, onRate }: Props) {
-    const [hover, setHover] = useState(0); // Üzerine gelince parlasın
+    const [hover, setHover] = useState(0); 
 
     return (
         <div style={{ display: "flex", alignItems: "center", gap: "5px", marginTop: "10px" }}>
@@ -19,7 +19,7 @@ function StarRating({ rating, onRate }: Props) {
                         style={{
                             cursor: "pointer",
                             fontSize: "20px",
-                            color: starValue <= (hover || rating) ? "#ffc107" : "#e4e5e9", // Sarı veya Gri
+                            color: starValue <= (hover || rating) ? "#ffc107" : "#e4e5e9", 
                             transition: "color 0.2s"
                         }}
                         onClick={() => onRate(starValue)}

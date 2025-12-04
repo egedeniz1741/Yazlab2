@@ -3,13 +3,13 @@ using Yazlab2.Server.Interfaces;
 
 namespace Yazlab2.Controllers
 {
-    [Route("api/[controller]")] // Erişim adresi: api/movies
+    [Route("api/[controller]")] 
     [ApiController]
     public class MoviesController : ControllerBase
     {
         private readonly ITmdbService _tmdbService;
 
-        // Dependency Injection ile servisimizi çağırıyoruz
+       
         public MoviesController(ITmdbService tmdbService)
         {
             _tmdbService = tmdbService;
@@ -17,7 +17,7 @@ namespace Yazlab2.Controllers
 
       
 
-        [HttpGet("{id}")]  //api/movies/550
+        [HttpGet("{id}")]  
         public async Task<IActionResult> GetMovieDetail(int id)
         {
             var movie = await _tmdbService.GetMovieDetailAsync(id);
@@ -26,7 +26,7 @@ namespace Yazlab2.Controllers
 
             return Ok(movie);
         }
-        [HttpGet("search")] // api/movies/search?query=batman
+        [HttpGet("search")] 
         public async Task<IActionResult> SearchMovies([FromQuery] string query)
         {
             if (string.IsNullOrWhiteSpace(query))
@@ -50,7 +50,7 @@ namespace Yazlab2.Controllers
 
         [HttpGet("discover")]
         public async Task<IActionResult> Discover(
-            [FromQuery] string? query, // YENİ: İsimle arama
+            [FromQuery] string? query, 
             [FromQuery] int? genreId,
             [FromQuery] int? year,
             [FromQuery] double? minRating,

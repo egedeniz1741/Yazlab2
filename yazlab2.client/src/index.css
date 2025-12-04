@@ -1,0 +1,54 @@
+:root {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+  
+    --bg-dark: #18181b; 
+    --card-dark: #27272a; 
+    --text-main: #e4e4e7; 
+    --text-muted: #a1a1aa; 
+    --border-color: #3f3f46; 
+
+    color-scheme: dark;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+}
+
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #52525b;
+    border-radius: 5px;
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #71717a;
+    }
+
+
+a {
+    color: #60a5fa; 
+    text-decoration: none;
+}
+
+    a:hover {
+        color: #93c5fd;
+    }
+
+button {
+    font-family: inherit;
+}

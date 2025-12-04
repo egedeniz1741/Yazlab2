@@ -26,7 +26,7 @@ namespace Yazlab2.Controllers
             _bookService = bookService;
         }
 
-        // 1. Yeni Liste Oluştur
+        
         [HttpPost("create")]
         public async Task<IActionResult> CreateList([FromBody] CreateListDto request)
         {
@@ -43,7 +43,7 @@ namespace Yazlab2.Controllers
             return Ok("Liste oluşturuldu.");
         }
 
-        // 2. Listelerimi Getir (Profil Sayfası İçin)
+        
         [HttpGet("my-lists")]
         public async Task<IActionResult> GetMyLists()
         {
@@ -58,7 +58,7 @@ namespace Yazlab2.Controllers
                     Id = l.Id,
                     Name = l.Name,
                     ItemCount = l.Items.Count,
-                    // İlk 3 öğenin resmini al (Kapak yapmak için)
+                   
                     Thumbnails = l.Items.Select(i => i.Movie != null ? i.Movie.PosterUrl : i.Book.CoverUrl)
                                         .Take(3).ToList()
                 })
@@ -67,7 +67,7 @@ namespace Yazlab2.Controllers
             return Ok(lists);
         }
 
-        // 3. Listeye Ekle (Film veya Kitap)
+        
         [HttpPost("add-item")]
         public async Task<IActionResult> AddItem([FromBody] AddItemDto request)
         {
@@ -79,7 +79,7 @@ namespace Yazlab2.Controllers
             int? movieId = null;
             int? bookId = null;
 
-            // Film ise: Önce Movies tablosunda var mı bak, yoksa API'den çek kaydet
+            
             if (request.TmdbId.HasValue)
             {
                 var movie = await _context.Movies.FirstOrDefaultAsync(m => m.TmdbId == request.TmdbId.ToString());
@@ -102,7 +102,7 @@ namespace Yazlab2.Controllers
                 }
                 movieId = movie.Id;
             }
-            // Kitap ise
+            
             else if (!string.IsNullOrEmpty(request.GoogleId))
             {
                 var book = await _context.Books.FirstOrDefaultAsync(b => b.GoogleBookId == request.GoogleId);
@@ -126,7 +126,7 @@ namespace Yazlab2.Controllers
                 bookId = book.Id;
             }
 
-            // Çakışma Kontrolü (Zaten var mı?)
+           
             bool exists = await _context.CustomListItems.AnyAsync(i =>
                 i.CustomListId == list.Id &&
                 ((movieId != null && i.MovieId == movieId) || (bookId != null && i.BookId == bookId)));
@@ -145,7 +145,7 @@ namespace Yazlab2.Controllers
             return Ok("Listeye eklendi.");
         }
 
-        // 4. Liste Sil
+        
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteList(int id)
         {
@@ -154,7 +154,7 @@ namespace Yazlab2.Controllers
 
             if (list == null || list.UserId != userId) return NotFound();
 
-            _context.CustomLists.Remove(list); // Cascade delete sayesinde içindekiler de silinir (DB ayarına göre)
+            _context.CustomLists.Remove(list); 
             await _context.SaveChangesAsync();
             return Ok("Liste silindi.");
         }
@@ -178,19 +178,19 @@ namespace Yazlab2.Controllers
             return Ok(lists);
         }
 
-        // 6. Liste Detayını Getir (İçine Girmek İçin)
+       
         [HttpGet("{id}")]
         public async Task<IActionResult> GetListDetail(int id)
         {
             var list = await _context.CustomLists
-                .Include(l => l.User) // Sahibini de alalım
+                .Include(l => l.User) 
                 .Include(l => l.Items).ThenInclude(i => i.Movie)
                 .Include(l => l.Items).ThenInclude(i => i.Book)
                 .FirstOrDefaultAsync(l => l.Id == id);
 
             if (list == null) return NotFound("Liste bulunamadı.");
 
-            // DTO'ya çevirelim
+           
             var result = new
             {
                 list.Id,
@@ -199,9 +199,9 @@ namespace Yazlab2.Controllers
                 OwnerName = list.User.Username,
                 Items = list.Items.Select(i => new
                 {
-                    Id = i.Id, // Bu satırın veritabanındaki ID'si (Silmek için lazım olabilir)
+                    Id = i.Id, 
                     Type = i.Movie != null ? "Movie" : "Book",
-                    ContentId = i.Movie != null ? i.Movie.TmdbId : i.Book.GoogleBookId, // Navigasyon için
+                    ContentId = i.Movie != null ? i.Movie.TmdbId : i.Book.GoogleBookId, 
                     Title = i.Movie != null ? i.Movie.Title : i.Book.Title,
                     Image = i.Movie != null ? i.Movie.PosterUrl : i.Book.CoverUrl,
                     Date = i.AddedAt

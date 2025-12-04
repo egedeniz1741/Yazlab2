@@ -2,13 +2,13 @@
 
 interface Item {
     id: number;
-    tmdbId?: string;   // Film için
-    googleBookId?: string; // Kitap için
+    tmdbId?: string;   
+    googleBookId?: string; 
     title: string;
     posterUrl?: string;
     coverUrl?: string;
-    platformCount?: number; // Kaç kişi ekledi
-    platformRating?: number; // Ortalama puan
+    platformCount?: number; 
+    platformRating?: number; 
 }
 
 interface Props {
@@ -20,7 +20,7 @@ interface Props {
 function Showcase({ title, items, type }: Props) {
     const navigate = useNavigate();
 
-    if (items.length === 0) return null; // Veri yoksa gösterme
+    if (items.length === 0) return null; 
 
     return (
         <div style={{ marginBottom: "40px" }}>
@@ -28,7 +28,7 @@ function Showcase({ title, items, type }: Props) {
                 {title}
             </h2>
 
-            {/* Yatay Kaydırılabilir Alan */}
+          
             <div style={{
                 display: "flex",
                 gap: "15px",
@@ -54,7 +54,7 @@ function Showcase({ title, items, type }: Props) {
                             style={{ width: "100%", height: "240px", objectFit: "cover", borderRadius: "10px", boxShadow: "0 4px 8px rgba(0,0,0,0.1)" }}
                         />
 
-                        {/* Rozet (Badge) */}
+                 
                         {(item.platformCount || item.platformRating) && (
                             <div style={{
                                 position: "absolute", top: "10px", right: "10px",

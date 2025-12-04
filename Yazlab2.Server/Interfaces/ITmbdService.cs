@@ -4,10 +4,10 @@ namespace Yazlab2.Server.Interfaces
 {
     public interface ITmdbService
     {
-        // Popüler filmleri getir
+     
     
 
-        // İsimle film ara
+       
         Task<List<MovieDto>> SearchMoviesAsync(string query);
         Task<MovieDto> GetMovieDetailAsync(int id);
 

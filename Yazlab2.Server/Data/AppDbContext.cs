@@ -9,7 +9,7 @@ namespace Yazlab2.Data
         {
         }
 
-        // --- TABLOLAR ---
+       
         public DbSet<User> Users { get; set; }
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Book> Books { get; set; }
@@ -27,7 +27,7 @@ namespace Yazlab2.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // --- UserMovie (Çoka-Çok İlişki) ---
+         
             modelBuilder.Entity<UserMovie>()
                 .HasKey(um => new { um.UserId, um.MovieId });
 
@@ -41,7 +41,7 @@ namespace Yazlab2.Data
                 .WithMany(m => m.UserMovies)
                 .HasForeignKey(um => um.MovieId);
 
-            // --- UserBook (Çoka-Çok İlişki) ---
+           
             modelBuilder.Entity<UserBook>()
                 .HasKey(ub => new { ub.UserId, ub.BookId });
 

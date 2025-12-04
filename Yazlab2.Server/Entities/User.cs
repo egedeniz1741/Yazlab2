@@ -27,7 +27,7 @@ namespace Yazlab2.Entities
         public string? VerificationToken { get; set; } 
         public bool IsVerified { get; set; } = false;
 
-        // İlişkiler
+        
         public ICollection<UserMovie> UserMovies { get; set; }
         public ICollection<UserBook> UserBooks { get; set; }
         public ICollection<Review> Reviews { get; set; }

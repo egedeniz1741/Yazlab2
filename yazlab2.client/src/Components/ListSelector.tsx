@@ -10,15 +10,15 @@ interface CustomList {
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  tmdbId?: number;      // Film ise bu dolu
-  googleId?: string;    // Kitap ise bu dolu
+  tmdbId?: number;      
+  googleId?: string;   
 }
 
 function ListSelector({ isOpen, onClose, tmdbId, googleId }: Props) {
   const [lists, setLists] = useState<CustomList[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Pencere açılınca listelerimi çek
+ 
   useEffect(() => {
     if (isOpen) {
       fetchLists();
@@ -45,7 +45,7 @@ function ListSelector({ isOpen, onClose, tmdbId, googleId }: Props) {
         googleId: googleId || null
       });
       alert("Eklendi!");
-      onClose(); // Pencereyi kapat
+      onClose(); 
     } catch (error: any) {
       alert(error.response?.data || "Hata oluştu (Zaten ekli olabilir).");
     }

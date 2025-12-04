@@ -26,7 +26,7 @@ namespace Yazlab2.Controllers
             _bookService = bookService;
         }
 
-        // --- FİLM EKLEME / GÜNCELLEME ---
+     
         [HttpPost("add-movie")]
         public async Task<IActionResult> AddMovieToLibrary([FromBody] AddMovieDto request)
         {
@@ -34,12 +34,12 @@ namespace Yazlab2.Controllers
             if (userIdClaim == null) return Unauthorized();
             int userId = int.Parse(userIdClaim.Value);
 
-            // 1. Film yerel veritabanımızda var mı?
+          
             var movie = await _context.Movies.FirstOrDefaultAsync(m => m.TmdbId == request.TmdbId.ToString());
 
             if (movie == null)
             {
-                // Yoksa TMDb'den çekip kaydedelim
+                
                 var tmdbMovie = await _tmdbService.GetMovieDetailAsync(request.TmdbId);
                 if (tmdbMovie == null) return BadRequest("Film TMDb'de bulunamadı.");
 
@@ -57,16 +57,16 @@ namespace Yazlab2.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            // 2. Kullanıcı ilişkisi var mı?
+           
             var existingRelation = await _context.UserMovies
                 .FirstOrDefaultAsync(um => um.UserId == userId && um.MovieId == movie.Id);
 
             if (existingRelation != null)
             {
-                // Varsa güncelle
+               
                 existingRelation.Status = request.Status;
 
-                // Eğer puan gönderildiyse puanı da güncelle
+               
                 if (request.Rating.HasValue && request.Rating > 0)
                 {
                     existingRelation.Rating = request.Rating;
@@ -76,13 +76,13 @@ namespace Yazlab2.Controllers
             }
             else
             {
-                // Yoksa yeni oluştur
+                
                 var userMovie = new UserMovie
                 {
                     UserId = userId,
                     MovieId = movie.Id,
                     Status = request.Status,
-                    Rating = request.Rating, // Puan varsa kaydet
+                    Rating = request.Rating, 
                     UpdatedAt = DateTime.Now
                 };
                 _context.UserMovies.Add(userMovie);
@@ -92,7 +92,7 @@ namespace Yazlab2.Controllers
             return Ok(new { message = "Film kütüphaneye eklendi/güncellendi!" });
         }
 
-        // --- KİTAP EKLEME / GÜNCELLEME ---
+       
         [HttpPost("add-book")]
         public async Task<IActionResult> AddBookToLibrary([FromBody] AddBookDto request)
         {
@@ -100,7 +100,7 @@ namespace Yazlab2.Controllers
             if (userIdClaim == null) return Unauthorized();
             int userId = int.Parse(userIdClaim.Value);
 
-            // 1. Kitap var mı?
+        
             var book = await _context.Books.FirstOrDefaultAsync(b => b.GoogleBookId == request.GoogleId);
 
             if (book == null)
@@ -122,7 +122,7 @@ namespace Yazlab2.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            // 2. İlişkiyi kur/güncelle
+         
             var existingRelation = await _context.UserBooks
                 .FirstOrDefaultAsync(ub => ub.UserId == userId && ub.BookId == book.Id);
 
@@ -154,7 +154,7 @@ namespace Yazlab2.Controllers
             return Ok(new { message = "Kitap kütüphaneye eklendi/güncellendi!" });
         }
 
-        // --- KÜTÜPHANEMİ GETİR (Filmler) ---
+        
         [HttpGet("my-movies")]
         public async Task<IActionResult> GetMyMovies()
         {
@@ -179,7 +179,7 @@ namespace Yazlab2.Controllers
             return Ok(userMovies);
         }
 
-        // --- KÜTÜPHANEMİ GETİR (Kitaplar) ---
+        
         [HttpGet("my-books")]
         public async Task<IActionResult> GetMyBooks()
         {
@@ -210,7 +210,7 @@ namespace Yazlab2.Controllers
             if (userIdClaim == null) return Ok(new { rating = 0, status = "None" });
             int userId = int.Parse(userIdClaim.Value);
 
-            // Önce filmi kendi DB'mizde bul (Yoksa zaten puan verilmemiştir)
+           
             var movie = await _context.Movies.FirstOrDefaultAsync(m => m.TmdbId == tmdbId.ToString());
             if (movie == null) return Ok(new { rating = 0, status = "None" });
 

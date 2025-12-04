@@ -24,7 +24,7 @@ namespace Yazlab2.Controllers
            
             var finalQuery = string.IsNullOrWhiteSpace(query) ? "books" : query;
 
-            // Filtreleri ekle
+           
             if (!string.IsNullOrEmpty(genre)) finalQuery += $"+subject:{genre}";
             if (year.HasValue) finalQuery += $"+key_date:{year}"; 
 

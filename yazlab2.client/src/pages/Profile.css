@@ -1,4 +1,4 @@
-/* GENEL */
+
 .profile-container {
     padding: 30px 20px;
     max-width: 1200px;
@@ -37,7 +37,7 @@
         margin-right: 8px;
     }
 
-/* PROFÝL KARTI */
+
 
 .profile-card {
     display: flex;
@@ -150,7 +150,7 @@
     font-weight: 600;
 }
 
-/* TABS */
+
 .tabs {
     border-bottom: 2px solid #e9ecef;
     margin-bottom: 30px;
@@ -174,7 +174,7 @@
         color: #007bff;
     }
 
-/* EMPTY */
+
 .empty-state {
     text-align: center;
     padding: 60px 20px;
@@ -188,7 +188,7 @@
     margin-bottom: 16px;
 }
 
-/* SECTION */
+
 .section {
     margin-bottom: 40px;
 }
@@ -231,7 +231,7 @@
     text-overflow: ellipsis;
 }
 
-/* LISTELER */
+
 
 .create-list-btn {
     margin-bottom: 25px;

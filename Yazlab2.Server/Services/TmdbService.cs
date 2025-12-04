@@ -21,7 +21,7 @@ namespace Yazlab2.Services
         {
 
             var apiKey = _configuration["TMDb:ApiKey"];
-            // page parametresini URL'e ekledik
+           
             var response = await _httpClient.GetAsync($"{_baseUrl}/movie/popular?api_key={apiKey}&language=tr-TR&page={page}");
 
             if (!response.IsSuccessStatusCode) return new List<MovieDto>();

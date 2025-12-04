@@ -2,15 +2,15 @@
 {
     public class MovieDto
     {
-        public int Id { get; set; } // TMDb ID'si
+        public int Id { get; set; } 
         public string Title { get; set; }
         public string Overview { get; set; }
-        public string PosterPath { get; set; } // Resim linki
+        public string PosterPath { get; set; } 
         public string ReleaseDate { get; set; }
         public double VoteAverage { get; set; }
     }
 
-    // TMDb'den gelen ana cevabı karşılamak için yardımcı sınıf
+   
     public class TmdbResponse
     {
         public List<TmdbResult> Results { get; set; }

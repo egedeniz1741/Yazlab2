@@ -20,7 +20,7 @@ namespace Yazlab2.Controllers
             _env = env;
         }
 
-        // Profil Bilgilerini Getir (Benim veya Başkasının)
+       
         [HttpGet("profile/{username?}")]
         public async Task<IActionResult> GetProfile(string? username = null)
         {
@@ -29,22 +29,22 @@ namespace Yazlab2.Controllers
 
             if (string.IsNullOrEmpty(username))
             {
-                // Kendi profilim
+               
                 user = await _context.Users.FindAsync(myId);
             }
             else
             {
-                // Başkasının profili
+                
                 user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
             }
 
             if (user == null) return NotFound("Kullanıcı bulunamadı.");
 
-            // Takip ediyor muyum?
+            
             var isFollowing = await _context.UserFollows
                 .AnyAsync(f => f.FollowerId == myId && f.FollowingId == user.Id);
 
-            // Takipçi ve Takip Edilen sayıları
+           
             var followersCount = await _context.UserFollows.CountAsync(f => f.FollowingId == user.Id);
             var followingCount = await _context.UserFollows.CountAsync(f => f.FollowerId == user.Id);
 
@@ -61,7 +61,7 @@ namespace Yazlab2.Controllers
             });
         }
 
-        // Profil Güncelle (Bio ve Avatar)
+        
         [HttpPut("update")]
         public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto request)
         {
@@ -70,7 +70,7 @@ namespace Yazlab2.Controllers
 
             if (user == null) return NotFound();
 
-            // Boş değilse güncelle
+           
             if (request.Bio != null) user.Bio = request.Bio;
             if (request.AvatarUrl != null) user.AvatarUrl = request.AvatarUrl;
 
@@ -83,18 +83,18 @@ namespace Yazlab2.Controllers
             if (file == null || file.Length == 0)
                 return BadRequest("Dosya seçilmedi.");
 
-            // --- GÜVENLİ YOL BULMA (DÜZELTİLEN KISIM) ---
+           
 
-            // Eğer WebRootPath null gelirse (klasör yoksa), projenin ana dizinine "wwwroot" ekleyerek yolu biz türetelim.
+            
             string webRootPath = _env.WebRootPath ?? Path.Combine(_env.ContentRootPath, "wwwroot");
 
             var uploadsFolder = Path.Combine(webRootPath, "uploads");
 
-            // Klasör fiziksel olarak yoksa oluştur
+           
             if (!Directory.Exists(uploadsFolder))
                 Directory.CreateDirectory(uploadsFolder);
 
-            // ---------------------------------------------
+           
 
             var uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
             var filePath = Path.Combine(uploadsFolder, uniqueFileName);
@@ -104,11 +104,11 @@ namespace Yazlab2.Controllers
                 await file.CopyToAsync(fileStream);
             }
 
-            // URL oluşturma
+          
             var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
             var fileUrl = $"{baseUrl}/uploads/{uniqueFileName}";
 
-            // DB Güncelleme
+           
             var myId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var user = await _context.Users.FindAsync(myId);
             user.AvatarUrl = fileUrl;

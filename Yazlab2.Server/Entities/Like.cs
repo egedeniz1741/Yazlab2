@@ -7,7 +7,7 @@
         public int UserId { get; set; }
         public User User { get; set; }
 
-        // Beğeni ya bir Filme ya bir Kitaba aittir
+       
         public int? MovieId { get; set; }
         public Movie? Movie { get; set; }
 

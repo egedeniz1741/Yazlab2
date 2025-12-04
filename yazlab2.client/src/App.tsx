@@ -9,7 +9,7 @@ import Social from "./pages/Social";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import CustomListDetail from "./pages/CustomListDetail";
-// Eğer BookDetail dosyası yoksa veya içi boşsa bu satır uygulamayı çökertir:
+
 import BookDetail from "./pages/BookDetail"; 
 import "./App.css";
 

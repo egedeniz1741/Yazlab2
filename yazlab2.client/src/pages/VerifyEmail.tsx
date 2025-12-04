@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import axios from "axios"; // Token yok, düz axios
+import axios from "axios"; 
 
 function VerifyEmail() {
   const [searchParams] = useSearchParams();
@@ -13,7 +13,7 @@ function VerifyEmail() {
   const handleVerify = async (e: any) => {
     e.preventDefault();
     try {
-        // verify-emailDto token ve email bekliyor
+       
         await axios.post("/api/auth/verify-email", { token: code, email: email });
         alert("Doðrulama Baþarýlý! Giriþ yapabilirsin.");
         navigate("/login");

@@ -7,7 +7,7 @@ namespace Yazlab2.Entities
         [Key]
         public int Id { get; set; }
 
-        public string? GoogleBookId { get; set; } // Dış API ID'si [cite: 90]
+        public string? GoogleBookId { get; set; } 
 
         public string Title { get; set; }
         public string? Authors { get; set; }

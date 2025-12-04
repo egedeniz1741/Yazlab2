@@ -129,11 +129,11 @@ namespace Yazlab2.Controllers
 
             if (review == null) return NotFound("Yorum bulunamadı.");
 
-            // Güvenlik Kontrolü: Yorumu düzenleyen kişi sahibi mi?
+         
             if (review.UserId != userId) return Unauthorized("Sadece kendi yorumunu düzenleyebilirsin.");
 
             review.Content = request.Content;
-            // review.UpdatedAt = DateTime.Now; // İstersen tarih de güncellenebilir
+            
 
             await _context.SaveChangesAsync();
             return Ok("Yorum güncellendi.");

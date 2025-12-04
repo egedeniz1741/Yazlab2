@@ -3,35 +3,11 @@ import api from "../api";
 import { useNavigate, useParams } from "react-router-dom";
 import FeedCard from "../components/FeedCard";
 import type { FeedItem } from "../types";
-import "./Profile.css";
 
-interface UserProfile {
-    id: number;
-    username: string;
-    bio: string;
-    avatarUrl: string;
-    isMe: boolean;
-    isFollowing: boolean;
-    followersCount: number;
-    followingCount: number;
-}
 
-interface LibraryItem {
-    id: number;
-    tmdbId?: string;
-    googleId?: string;
-    title: string;
-    posterUrl?: string;
-    coverUrl?: string;
-    status: string;
-}
-
-interface CustomList {
-    id: number;
-    name: string;
-    itemCount: number;
-    thumbnails: string[];
-}
+interface UserProfile { id: number; username: string; bio: string; avatarUrl: string; isMe: boolean; isFollowing: boolean; followersCount: number; followingCount: number; }
+interface LibraryItem { id: number; tmdbId?: string; googleId?: string; title: string; posterUrl?: string; coverUrl?: string; status: string; }
+interface CustomList { id: number; name: string; itemCount: number; thumbnails: string[]; }
 
 function Profile() {
     const [user, setUser] = useState<UserProfile | null>(null);
@@ -39,20 +15,15 @@ function Profile() {
     const [books, setBooks] = useState<LibraryItem[]>([]);
     const [customLists, setCustomLists] = useState<CustomList[]>([]);
     const [activities, setActivities] = useState<FeedItem[]>([]);
-
-    const [activeTab, setActiveTab] = useState("activities");
+    const [activeTab, setActiveTab] = useState("movies");
     const [loading, setLoading] = useState(true);
-
     const [isEditing, setIsEditing] = useState(false);
     const [editBio, setEditBio] = useState("");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
     const navigate = useNavigate();
     const { username } = useParams();
 
-    useEffect(() => {
-        loadProfile();
-    }, [username]);
+    useEffect(() => { loadProfile(); }, [username]);
 
     const loadProfile = async () => {
         setLoading(true);
@@ -61,29 +32,17 @@ function Profile() {
             const userRes = await api.get(endpoint);
             setUser(userRes.data);
             setEditBio(userRes.data.bio || "");
-
             const targetUser = userRes.data.username;
             const targetUserId = userRes.data.id;
 
             const [movieRes, bookRes, listRes, activityRes] = await Promise.all([
                 api.get(`/api/library/user-movies/${targetUser}`),
                 api.get(`/api/library/user-books/${targetUser}`),
-                userRes.data.isMe
-                    ? api.get("/api/customlist/my-lists")
-                    : api.get(`/api/customlist/user-lists/${targetUserId}`),
+                userRes.data.isMe ? api.get("/api/customlist/my-lists") : api.get(`/api/customlist/user-lists/${targetUserId}`),
                 api.get(`/api/social/user-feed/${targetUser}`)
             ]);
-
-            setMovies(movieRes.data);
-            setBooks(bookRes.data);
-            setCustomLists(listRes.data);
-            setActivities(activityRes.data);
-
-        } catch (error) {
-            console.error("Hata:", error);
-        } finally {
-            setLoading(false);
-        }
+            setMovies(movieRes.data); setBooks(bookRes.data); setCustomLists(listRes.data); setActivities(activityRes.data);
+        } catch (error) { console.error(error); } finally { setLoading(false); }
     };
 
     const handleUpdateProfile = async () => {
@@ -94,45 +53,28 @@ function Profile() {
                 await api.post("/api/user/upload-avatar", formData, { headers: { "Content-Type": "multipart/form-data" } });
             }
             await api.put("/api/user/update", { bio: editBio, avatarUrl: null });
-            alert("Profil güncellendi!");
-            setIsEditing(false);
-            loadProfile();
-        } catch (error) {
-            alert("Hata oluştu.");
-        }
+            alert("Profil güncellendi!"); setIsEditing(false); loadProfile();
+        } catch (error) { alert("Hata oluştu."); }
     };
 
     const handleFollowToggle = async () => {
         if (!user) return;
         try {
-            if (user.isFollowing) {
-                await api.delete(`/api/social/unfollow/${user.id}`);
-            } else {
-                await api.post(`/api/social/follow/${user.id}`);
-            }
+            if (user.isFollowing) await api.delete(`/api/social/unfollow/${user.id}`);
+            else await api.post(`/api/social/follow/${user.id}`);
             setUser(prev => prev ? { ...prev, isFollowing: !prev.isFollowing } : null);
-        } catch (error) {
-            alert("İşlem başarısız.");
-        }
+        } catch (error) { alert("İşlem başarısız."); }
     };
 
     const handleCreateList = async () => {
         const name = prompt("Liste adı giriniz:");
         if (!name) return;
-        try {
-            await api.post("/api/customlist/create", { name });
-            alert("Liste oluşturuldu!");
-            loadProfile();
-        } catch (error) { alert("Hata oluştu."); }
+        try { await api.post("/api/customlist/create", { name }); alert("Liste oluşturuldu!"); loadProfile(); } catch (error) { alert("Hata oluştu."); }
     };
 
     const handleDeleteList = async (id: number, e: any) => {
-        e.stopPropagation();
-        if (!confirm("Listeyi silmek istiyor musunuz?")) return;
-        try {
-            await api.delete(`/api/customlist/${id}`);
-            loadProfile();
-        } catch (error) { alert("Silinemedi."); }
+        e.stopPropagation(); if (!confirm("Sileyim mi?")) return;
+        try { await api.delete(`/api/customlist/${id}`); loadProfile(); } catch (error) { alert("Silinemedi."); }
     };
 
     const watchedMovies = movies.filter(m => m.status === "Watched");
@@ -140,203 +82,113 @@ function Profile() {
     const readBooks = books.filter(b => b.status === "Read");
     const planBooks = books.filter(b => b.status === "PlanToRead");
 
-    if (loading) return <div className="loading">Yükleniyor...</div>;
-    if (!user) return <div className="not-found">Kullanıcı bulunamadı.</div>;
+    if (loading) return <div style={{ textAlign: "center", marginTop: "50px", color: "#a1a1aa" }}>Yükleniyor...</div>;
+    if (!user) return <div style={{ textAlign: "center", marginTop: "50px", color: "#a1a1aa" }}>Kullanıcı bulunamadı.</div>;
 
     return (
-        <div className="profile-container">
-            <button onClick={() => navigate("/")} className="back-button">
-                <span>←</span> Ana Sayfa
-            </button>
+        <div style={{ padding: "20px", maxWidth: "1000px", margin: "0 auto", color: "#e4e4e7" }}>
+            <button onClick={() => navigate("/")} style={{ marginBottom: "20px", cursor: "pointer", background: "none", border: "none", color: "#3b82f6" }}>← Ana Sayfa</button>
 
-            {/* PROFİL KARTI */}
-            <div className="profile-card">
-                <img
-                    src={user.avatarUrl || "https://via.placeholder.com/150"}
-                    alt={user.username}
-                    className="avatar"
-                />
-                <div className="profile-info">
-                    <div className="profile-header">
-                        <h1 className="username">@{user.username}</h1>
-
+            
+            <div style={{ display: "flex", gap: "30px", alignItems: "flex-start", padding: "30px", backgroundColor: "#27272a", borderRadius: "15px", marginBottom: "30px", border: "1px solid #3f3f46" }}>
+                <img src={user.avatarUrl || "https://via.placeholder.com/150"} alt={user.username} style={{ width: "120px", height: "120px", borderRadius: "50%", objectFit: "cover", border: "4px solid #3f3f46" }} />
+                <div style={{ flex: 1 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <h1 style={{ margin: "0 0 10px 0" }}>@{user.username}</h1>
                         {user.isMe ? (
-                            <button
-                                onClick={() => setIsEditing(!isEditing)}
-                                className={isEditing ? "cancel-edit-btn" : "edit-btn"}
-                            >
-                                {isEditing ? "İptal" : "Profili Düzenle"}
-                            </button>
+                            <button onClick={() => setIsEditing(!isEditing)} style={{ padding: "8px 15px", backgroundColor: "#3f3f46", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}>{isEditing ? "İptal" : "Profili Düzenle"}</button>
                         ) : (
-                            <button
-                                onClick={handleFollowToggle}
-                                className={user.isFollowing ? "unfollow-btn" : "follow-btn"}
-                            >
-                                {user.isFollowing ? "Takipten Çık" : "Takip Et"}
-                            </button>
+                            <button onClick={handleFollowToggle} style={{ padding: "8px 20px", backgroundColor: user.isFollowing ? "#ef4444" : "#22c55e", color: "white", border: "none", borderRadius: "5px", cursor: "pointer", fontWeight: "bold" }}>{user.isFollowing ? "Takipten Çık" : "Takip Et"}</button>
                         )}
                     </div>
 
                     {isEditing ? (
-                        <div className="edit-form">
-                            <textarea
-                                value={editBio}
-                                onChange={e => setEditBio(e.target.value)}
-                                rows={3}
-                                className="edit-textarea"
-                                placeholder="Biyografinizi yazın..."
-                            />
-                            <input
-                                type="file"
-                                onChange={e => e.target.files && setSelectedFile(e.target.files[0])}
-                                className="file-input"
-                            />
-                            <button onClick={handleUpdateProfile} className="save-btn">
-                                ✓ Kaydet
-                            </button>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "10px" }}>
+                            <textarea value={editBio} onChange={e => setEditBio(e.target.value)} rows={3} style={{ padding: "10px", borderRadius: "5px", border: "1px solid #3f3f46", backgroundColor: "#18181b", color: "white" }} />
+                            <input type="file" onChange={e => e.target.files && setSelectedFile(e.target.files[0])} style={{ color: "white" }} />
+                            <button onClick={handleUpdateProfile} style={{ padding: "10px", backgroundColor: "#3b82f6", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}>Kaydet</button>
                         </div>
                     ) : (
                         <>
-                            <p className="bio">{user.bio || "Henüz bir biyografi eklenmemiş."}</p>
-                            <div className="stats">
-                                <span><strong>{user.followersCount}</strong> Takipçi</span>
-                                <span><strong>{user.followingCount}</strong> Takip</span>
+                            <p style={{ color: "#a1a1aa" }}>{user.bio || "Biyografi yok."}</p>
+                            <div style={{ display: "flex", gap: "20px", marginTop: "15px", fontWeight: "bold" }}>
+                                <span>{user.followersCount} Takipçi</span><span>{user.followingCount} Takip</span>
                             </div>
                         </>
                     )}
                 </div>
             </div>
 
-            {/* SEKMELER */}
-            <div className="tabs">
-                <button onClick={() => setActiveTab("activities")} className={activeTab === "activities" ? "tab active" : "tab"}>
-                    ⚡ Son Aktiviteler
-                </button>
-                <button onClick={() => setActiveTab("movies")} className={activeTab === "movies" ? "tab active" : "tab"}>
-                    🎬 Filmler
-                </button>
-                <button onClick={() => setActiveTab("books")} className={activeTab === "books" ? "tab active" : "tab"}>
-                    📚 Kitaplar
-                </button>
-                <button onClick={() => setActiveTab("lists")} className={activeTab === "lists" ? "tab active" : "tab"}>
-                    📂 Listeler
-                </button>
+        
+            <div style={{ borderBottom: "1px solid #3f3f46", marginBottom: "20px", display: "flex", justifyContent: "center" }}>
+                <button onClick={() => setActiveTab("activities")} style={tabStyle(activeTab === "activities")}>⚡ Aktiviteler</button>
+                <button onClick={() => setActiveTab("movies")} style={tabStyle(activeTab === "movies")}>🎬 Filmler</button>
+                <button onClick={() => setActiveTab("books")} style={tabStyle(activeTab === "books")}>📚 Kitaplar</button>
+                <button onClick={() => setActiveTab("lists")} style={tabStyle(activeTab === "lists")}>📂 Listeler</button>
             </div>
 
-            <div className="content">
-                {/* 1. AKTİVİTELER */}
-                {activeTab === "activities" && (
-                    <div>
-                        {activities.length === 0 ? (
-                            <div className="empty-state">
-                                <div className="empty-icon">⚡</div>
-                                <p>Henüz bir aktivite yok.</p>
+       
+            {activeTab === "activities" && (
+                <div>
+                    {activities.length === 0 ? <p style={{ textAlign: "center", color: "#a1a1aa" }}>Aktivite yok.</p> : activities.map((item, i) => <FeedCard key={i} item={item} />)}
+                </div>
+            )}
+
+            {activeTab === "movies" && (
+                <div>
+                    <Section title="✅ İzledikleri" items={watchedMovies} type="movie" navigate={navigate} />
+                    <Section title="📅 İzleyecekleri" items={planMovies} type="movie" navigate={navigate} />
+                </div>
+            )}
+
+            {activeTab === "books" && (
+                <div>
+                    <Section title="✅ Okudukları" items={readBooks} type="book" navigate={navigate} />
+                    <Section title="📖 Okuyacakları" items={planBooks} type="book" navigate={navigate} />
+                </div>
+            )}
+
+            {activeTab === "lists" && (
+                <div>
+                    {user.isMe && <button onClick={handleCreateList} style={{ marginBottom: "20px", padding: "10px 20px", backgroundColor: "#3b82f6", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}>+ Yeni Liste</button>}
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "20px" }}>
+                        {customLists.map(list => (
+                            <div key={list.id} onClick={() => navigate(`/list/${list.id}`)} style={{ border: "1px solid #3f3f46", borderRadius: "10px", overflow: "hidden", position: "relative", cursor: "pointer", backgroundColor: "#27272a" }}>
+                                <div style={{ height: "150px", backgroundColor: "#18181b", display: "flex", flexWrap: "wrap" }}>
+                                    {list.thumbnails.map((url, i) => <img key={i} src={url} style={{ width: "33%", height: "100%", objectFit: "cover" }} />)}
+                                </div>
+                                <div style={{ padding: "10px" }}>
+                                    <h4 style={{ margin: 0, color: "#e4e4e7" }}>{list.name}</h4>
+                                    <p style={{ fontSize: "12px", color: "#a1a1aa" }}>{list.itemCount} içerik</p>
+                                </div>
+                                {user.isMe && <button onClick={(e) => handleDeleteList(list.id, e)} style={{ position: "absolute", top: "5px", right: "5px", background: "red", color: "white", border: "none", borderRadius: "50%", width: "25px", height: "25px", cursor: "pointer" }}>×</button>}
                             </div>
-                        ) : (
-                            activities.map((item, index) => (
-                                <FeedCard key={`act-${index}`} item={item} />
-                            ))
-                        )}
+                        ))}
                     </div>
-                )}
-
-                {/* 2. FİLMLER */}
-                {activeTab === "movies" && (
-                    <div>
-                        <Section title="✅ İzledikleri" items={watchedMovies} type="movie" navigate={navigate} />
-                        <Section title="📅 İzleyecekleri" items={planMovies} type="movie" navigate={navigate} />
-                    </div>
-                )}
-
-                {/* 3. KİTAPLAR */}
-                {activeTab === "books" && (
-                    <div>
-                        <Section title="✅ Okudukları" items={readBooks} type="book" navigate={navigate} />
-                        <Section title="📖 Okuyacakları" items={planBooks} type="book" navigate={navigate} />
-                    </div>
-                )}
-
-                {/* 4. LİSTELER */}
-                {activeTab === "lists" && (
-                    <div>
-                        {user.isMe && (
-                            <button onClick={handleCreateList} className="create-list-btn">
-                                + Yeni Liste Oluştur
-                            </button>
-                        )}
-
-                        <div className="lists-grid">
-                            {customLists.length === 0 && (
-                                <div className="empty-state">
-                                    <div className="empty-icon">📂</div>
-                                    <p>Henüz liste oluşturulmamış.</p>
-                                </div>
-                            )}
-
-                            {customLists.map(list => (
-                                <div
-                                    key={list.id}
-                                    onClick={() => navigate(`/list/${list.id}`)}
-                                    className="list-card"
-                                >
-                                    <div className="list-thumbnails">
-                                        {list.thumbnails.length > 0 ? (
-                                            list.thumbnails.map((url, i) => (
-                                                <img key={i} src={url} className="thumb" alt="" />
-                                            ))
-                                        ) : (
-                                            <div className="empty-thumb">Boş Liste</div>
-                                        )}
-                                    </div>
-
-                                    <div className="list-info">
-                                        <h4>{list.name}</h4>
-                                        <p>{list.itemCount} içerik</p>
-                                    </div>
-
-                                    {user.isMe && (
-                                        <button
-                                            onClick={(e) => handleDeleteList(list.id, e)}
-                                            className="delete-list-btn"
-                                        >
-                                            ×
-                                        </button>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     );
 }
 
 const Section = ({ title, items, type, navigate }: any) => (
-    <div className="section">
-        <h3 className="section-title">{title} <span>({items.length})</span></h3>
-
-        {items.length === 0 ? (
-            <p className="section-empty">Bu liste boş.</p>
-        ) : (
-            <div className="section-grid">
+    <div style={{ marginBottom: "40px" }}>
+        <h3>{title} ({items.length})</h3>
+        {items.length === 0 ? <p style={{ color: "#a1a1aa", fontStyle: "italic" }}>Boş.</p> : (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: "15px" }}>
                 {items.map((item: any) => (
-                    <div
-                        key={item.id}
-                        onClick={() => navigate(type === "movie" ? `/movie/${item.tmdbId}` : `/book/${item.googleId}`)}
-                        className="item-card"
-                    >
-                        <img
-                            src={type === "movie" ? item.posterUrl : item.coverUrl}
-                            alt={item.title}
-                            className="item-img"
-                        />
-                        <p className="item-title">{item.title}</p>
+                    <div key={item.id} onClick={() => navigate(type === "movie" ? `/movie/${item.tmdbId}` : `/book/${item.googleId}`)} style={{ cursor: "pointer" }}>
+                        <img src={type === "movie" ? item.posterUrl : item.coverUrl} style={{ width: "100%", height: "200px", objectFit: "cover", borderRadius: "8px" }} />
+                        <p style={{ fontSize: "13px", margin: "5px 0 0 0", fontWeight: "bold", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#e4e4e7" }}>{item.title}</p>
                     </div>
                 ))}
             </div>
         )}
     </div>
 );
+
+const tabStyle = (isActive: boolean) => ({
+    padding: "10px 20px", border: "none", borderBottom: isActive ? "3px solid #3b82f6" : "3px solid transparent", background: "transparent", cursor: "pointer", fontSize: "16px", fontWeight: "bold", color: isActive ? "#3b82f6" : "#a1a1aa"
+});
 
 export default Profile;

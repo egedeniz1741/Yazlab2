@@ -4,7 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import api from "../api";
 import "./Login.css";
 
-// İkonlar
+
 import { MdEmail } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
 

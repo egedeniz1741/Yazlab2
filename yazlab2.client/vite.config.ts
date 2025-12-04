@@ -38,12 +38,12 @@ export default defineConfig({
     server: {
         proxy: {
             '^/api': {
-                target: 'http://127.0.0.1:5120', // http ve 5120
-                changeOrigin: true, // Bunu eklemek bazen hataları çözer
+                target: 'http://127.0.0.1:5120', 
+                changeOrigin: true, 
                 secure: false
             }
         },
         port: 5173,
-        // ...
+      
     }
 });

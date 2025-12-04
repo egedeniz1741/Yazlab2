@@ -1,4 +1,4 @@
-﻿// Yorum Güncelleme Modeli
+﻿
 using System.ComponentModel.DataAnnotations;
 
 public class UpdateReviewDto

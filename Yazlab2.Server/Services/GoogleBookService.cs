@@ -35,7 +35,7 @@ namespace Yazlab2.Services
                 Description = b.VolumeInfo.Description,
                 PageCount = b.VolumeInfo.PageCount,
                 PublishedDate = b.VolumeInfo.PublishedDate,
-                // Kapak resmi yoksa placeholder koyuyoruz
+               
                 CoverUrl = b.VolumeInfo.ImageLinks?.Thumbnail
                            ?? "https://via.placeholder.com/128x196?text=No+Cover"
             }).ToList();
